@@ -545,7 +545,9 @@
     <script>
         // *** CONFIGURARE ȘI INIȚIALIZARE DATE ***
         const KEY = 'vocea_elevilor_data_v4'; // Cheia principală de stocare
-        const ADMIN_PASS_KEY = 'admin_password_cni'; // Cheia pentru stocarea parolei admin
+        // FIX V4.7: Eliminăm cheia ADMIN_PASS_KEY din localStorage. Parola este fixă.
+        const ADMIN_PASSWORD = '1234'; // Parola de acces fixă pentru modul Admin
+        
         let state = JSON.parse(localStorage.getItem(KEY) || '{}');
         let isAdminMode = false;
 
@@ -1008,7 +1010,8 @@
             }
         }
         
-        // --- Securitate și Mod Admin ---
+        // --- Securitate și Mod Admin (ACTUALIZAT V4.7 CU PAROLA FIXĂ '1234') ---
+        
         document.getElementById('toggleAdmin').addEventListener('click', toggleAdmin);
 
         function updateAdminUI() {
@@ -1018,19 +1021,19 @@
                 // Mod Admin Activ: Afișează sidebar, schimbă grila, actualizează butonul
                 adminSidebar.classList.add('admin-visible');
                 mainGrid.classList.add('admin-visible');
-                adminContent.style.display = 'block'; // Fostul sticky panel
+                adminContent.style.display = 'block'; 
                 button.textContent = 'Ieși Mod Admin';
                 button.classList.add('urgent');
             } else {
-                // Mod Normal Activ: Ascunde sidebar, revine la grila normală, actualizează butonul
+                // Mod Normal Activ
                 adminSidebar.classList.remove('admin-visible');
                 mainGrid.classList.remove('admin-visible');
-                adminContent.style.display = 'none'; // ASCUNDE conținutul administrativ
+                adminContent.style.display = 'none'; 
                 button.textContent = 'Intră Mod Admin';
                 button.classList.remove('urgent');
             }
 
-            // Re-rendează tot (Calendar și Poll au logica lor internă de Admin)
+            // Re-rendează tot
             renderProbleme();
             renderBullying();
             renderSugestii(); 
@@ -1047,39 +1050,19 @@
             // Bară de progres vizibilă doar în Mod Admin
             document.getElementById('progressContainer').style.display = isAdminMode ? 'block' : 'none';
             countsSpan.style.display = isAdminMode ? 'block' : 'none';
-            if (isAdminMode) renderProgress(); // Re-afiseaza progresul
+            if (isAdminMode) renderProgress(); 
         }
         
         function toggleAdmin() {
-            const adminPass = localStorage.getItem(ADMIN_PASS_KEY);
-            
             if (isAdminMode) {
                 // Ieșire din Mod Admin
                 isAdminMode = false;
                 showToast('Mod Admin dezactivat. Văzut ca elev.');
             } else {
                 // Încercare de a intra în Mod Admin
-                let password;
-                
-                if (!adminPass) {
-                    // Cazul 1: Parola nu e setată (Prima utilizare)
-                    password = prompt("🔑 Parola de administrare nu este setată. Definiți o parolă nouă:");
-                    if (password && password.length >= 4) {
-                        localStorage.setItem(ADMIN_PASS_KEY, password);
-                        showToast("Parolă setată cu succes! Notați-o.");
-                    } else if (password !== null) {
-                         showToast("Parola trebuie să aibă minim 4 caractere.", true);
-                         return;
-                    } else {
-                        return; // Anulare
-                    }
-                }
+                const password = prompt("🔒 Introduceți parola de administrare (1234):");
 
-                // Cazul 2: Parola este setată (Logare)
-                const currentPass = localStorage.getItem(ADMIN_PASS_KEY);
-                password = prompt("🔒 Introduceți parola de administrare:");
-
-                if (password === currentPass) {
+                if (password === ADMIN_PASSWORD) { // Verificare directă cu parola fixă
                     isAdminMode = true;
                     showToast('Acces Admin acordat.');
                 } else if (password !== null) {
@@ -1091,6 +1074,8 @@
             }
 
             updateAdminUI();
+            // Păstrăm starea de admin activă la reload (opțional, dar util)
+            localStorage.setItem('isAdminModeActive', isAdminMode); 
         }
 
         // --- Event Listeners (Trimitere Formulare) ---
@@ -1363,6 +1348,7 @@
                  return;
             }
 
+            // ATENȚIE: Șterge și starea 'isAdminModeActive', dar parola e fixă, deci nu e problemă.
             if (confirm("ATENȚIE! Această acțiune va șterge TOATE datele salvate în browser (sesizări, anunțuri, voturi, parolă admin). Ești sigur?")) {
                 localStorage.clear();
                 window.location.reload(); 
@@ -1419,7 +1405,7 @@
             });
 
             // Re-activează Admin Mode (fără a cere parola) dacă era activ la reîncărcare
-            if (localStorage.getItem('isAdminModeActive') === 'true' && localStorage.getItem(ADMIN_PASS_KEY)) {
+            if (localStorage.getItem('isAdminModeActive') === 'true') {
                 isAdminMode = true;
                 updateAdminUI(); // Actualizează doar UI-ul, nu cere relogare forțată
             } else {
