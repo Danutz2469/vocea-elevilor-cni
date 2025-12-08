@@ -1,1008 +1,1494 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-    <title>Vocea Elevilor | CNI Piatra Neamț</title>
-    
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <link rel="icon" type="image/png" href="logo-scoala.png">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Hub - Portal Comunitar</title>
     <style>
-        /* Stiluri CSS: Nu le modificati decat daca stiti ce faceti */
+        /* --- CSS-ul Minimal Necesare pentru Funcționalitatea Codului --- */
         :root {
-            --primary: #007bff;
-            --secondary: #6c757d;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --font-family: Arial, sans-serif;
-            --bg-color: #f0f2f5;
+            --primary: #1e3a8a; /* Indigo 800 */
+            --accent: #fcd34d; /* Amber 300 */
+            --muted: #6b7280; /* Gray 500 */
+            --background: #f9fafb; /* Gray 50 */
+            --probleme-color: #ef4444; /* Red 500 */
+            --sugestii-color: #10b981; /* Emerald 500 */
+            --acad-color: #3b82f6; /* Blue 500 */
+            --resurse-color: #8b5cf6; /* Violet 500 */
+            --bullying-color: #991b1b; /* Red 800 */
         }
 
         body {
-            font-family: var(--font-family);
+            font-family: sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--dark);
+            background-color: var(--background);
+            color: #1f2937;
+            padding-top: 60px; /* Pentru a face loc headerului fix */
         }
 
-        /* HEADER */
-        .header {
-            background-color: white;
-            padding: 15px 20px;
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 10px 20px;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-scoala {
-            height: 40px;
-            margin-right: 15px;
-        }
-
-        .site-title {
-            font-size: 1.5em;
-            color: var(--dark);
-            margin: 0;
-        }
-
-        .header-right {
-            display: flex;
-            gap: 10px;
-        }
-        
-        /* GENERAL UTILITIES */
-        .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        .logo {
+            font-size: 1.5rem;
             font-weight: bold;
-            font-size: 0.9em;
+            color: var(--primary);
         }
 
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
+        .nav-links {
+            display: none;
         }
 
-        .btn-primary:hover {
-            background-color: #0056b3;
+        .burger.open + .nav-links {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
         }
 
-        .btn-secondary {
-            background-color: var(--secondary);
-            color: white;
+        .burger {
+            cursor: pointer;
+            padding: 5px;
         }
 
-        .btn-secondary:hover {
-            background-color: #5a6268;
+        /* ADMIN UI STYLES */
+        .admin-visible {
+            grid-template-columns: 250px 1fr !important;
         }
         
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        /* MAIN LAYOUT */
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .grid-container {
+        #mainGrid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr;
             gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
         }
 
+        #adminSidebar {
+            background-color: #1f2937;
+            color: white;
+            padding: 20px;
+            display: none; /* Ascuns implicit */
+        }
+
+        #adminSidebar.admin-visible {
+            display: block;
+        }
+        
+        /* CARD STYLES */
         .card {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
+        .card.revealed {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .card h3 {
-            color: var(--primary);
-            margin-top: 0;
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            background-color: var(--muted);
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .card-body textarea, .card-body input[type="text"] {
+        .thumb img {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb svg {
+            width: 30px;
+            height: 30px;
+            color: #fff;
+        }
+
+        .status {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .status.open { background-color: var(--probleme-color); }
+        .status.progress { background-color: var(--acad-color); }
+        .status.resolved { background-color: var(--sugestii-color); }
+
+        .meta {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover { background-color: #1f377a; }
+        .btn.urgent { background-color: var(--probleme-color); }
+        .btn.urgent:hover { background-color: #c93434; }
+
+        /* Form Styling */
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        form input, form select, form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            resize: vertical;
         }
 
-        .message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
+        /* Comments Styling */
+        .comments-section {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
         }
 
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
+        .comment-item {
+            background-color: #fafafa;
+            padding: 8px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 5px;
+            font-size: 13px;
         }
-        
-        /* HERO SECTION (Background Image) */
-        .hero {
-            background: url('hero-bg.jpg') no-repeat center center;
-            background-size: cover;
-            height: 250px; 
+
+        .comment-meta {
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .comment-form-container {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .comment-form-container textarea {
+            flex-grow: 1;
+            min-height: 40px;
+            resize: none;
+        }
+
+        /* Progress Bar */
+        #progressContainer {
             margin-bottom: 20px;
         }
-        
-        .hero h2 {
-            font-size: 2.5em;
-            margin: 0;
-            padding-bottom: 10px;
+        .progress-bar-container {
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 20px;
+        }
+        #progressBar {
+            height: 100%;
+            background-color: var(--sugestii-color);
+            transition: width 0.5s ease;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+        }
+        #progressPercent {
+            display: inline-block;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+        #counts {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 5px;
         }
         
-        .hero p {
-            font-size: 1.2em;
-            margin: 0;
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1001;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* ADMIN MODAL */
-        .modal {
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
+
+        /* Sondaj Bars */
+        .bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .bar span {
+            display: block;
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.5s ease;
+        }
+        
+        /* Back to Top Button */
+        #toTop {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        /* ADMIN VIEW */
-        .admin-view {
-            display: none;
-            grid-template-columns: 250px 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .admin-sidebar {
-            background-color: var(--dark);
-            color: white;
-            padding: 20px 0;
-            border-radius: 8px;
-            height: 100%;
-        }
-        
-        .admin-sidebar h4 {
-            text-align: center;
-            margin-top: 0;
-            padding: 0 20px 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .admin-sidebar button {
-            display: block;
-            width: 100%;
-            padding: 10px 20px;
-            text-align: left;
-            background: none;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
             border: none;
+            outline: none;
+            background-color: var(--primary);
             color: white;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .admin-sidebar button:hover, .admin-sidebar button.active {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .admin-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
-        .data-item {
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            background-color: var(--light);
-            word-wrap: break-word;
-        }
-        
-        .data-item.bullying {
-            background-color: #f8d7da; /* Pentru a sublinia confidentialitatea */
-        }
-        
-        .data-item strong {
-            color: var(--primary);
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .data-item span.date {
-            font-size: 0.8em;
-            color: var(--secondary);
-            float: right;
-        }
-        
-        /* Votare Sondaj */
-        .poll-options label {
-            display: block;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
 
-        .poll-options label:hover {
-            background-color: #f0f0f0;
-        }
-
-        .poll-results {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px dashed var(--info);
-            border-radius: 5px;
-            background-color: #e0f7fa;
+        #toTop.show {
+            display: block;
         }
         
-        .poll-results .bar {
-            background-color: var(--primary);
-            height: 20px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-            color: white;
-            text-align: center;
-            line-height: 20px;
-            font-size: 0.8em;
+        /* Responsive Grid Adjustments */
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex !important; /* Force flex on desktop */
+                position: static !important;
+                box-shadow: none !important;
+                flex-direction: row !important;
+                gap: 20px;
+            }
+            .burger {
+                display: none;
+            }
+            #mainGrid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            #adminSidebar {
+                grid-row: 1 / 4;
+                grid-column: 1 / 2;
+                display: none;
+            }
+            #adminSidebar.admin-visible {
+                 display: block;
+            }
+            .main-content {
+                grid-column: span 3;
+            }
+            .admin-visible .main-content {
+                grid-column: 2 / 4;
+            }
+            
+            /* Admin Layout Fix */
+            .admin-visible .card.full-width {
+                grid-column: 2 / 4;
+            }
         }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .grid-container {
-                grid-template-columns: 1fr;
-            }
-            .header {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .header-right {
-                width: 100%;
-                justify-content: space-around;
-            }
-            .admin-view {
-                grid-template-columns: 1fr;
-            }
-            .admin-sidebar {
-                padding: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-around;
-            }
-            .admin-sidebar button {
-                width: auto;
-                flex-grow: 1;
-                text-align: center;
-            }
-            .hero {
-                height: 180px;
-            }
-            .hero h2 {
-                font-size: 1.8em;
-            }
+        /* ADMIN CONTROLS */
+        .admin-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            align-items: center;
+        }
+        .admin-controls select {
+            padding: 5px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
+    <div id="toast"></div>
 
-    <header class="header">
-        <div class="header-left">
-            <img src="logo-scoala.png" alt="Logo Școală" class="logo-scoala">
-            <h1 class="site-title">VOCEA ELEVILOR CNI</h1>
-        </div>
-        <div class="header-right">
-            <button id="adminLoginBtn" class="btn btn-primary">Intră Mod Admin</button>
-            <button id="adminLogoutBtn" class="btn btn-secondary" style="display: none;">Ieși Admin</button>
-        </div>
+    <header>
+        <div class="logo">🏫 School Hub</div>
+        <div class="burger" id="burger">☰</div>
+        <nav class="nav-links" id="navLinks">
+            <button id="toggleAdmin">Intră Mod Admin</button>
+            <span style="display:flex; align-items:center;">
+                Anunțuri 
+                <span id="announcement-badge" class="status open" style="margin-left: 5px; display: none;">0</span>
+            </span>
+        </nav>
     </header>
 
-    <div class="container">
-        <div class="hero">
-            <h2>Platforma de Comunicare Elevi</h2>
-            <p>Raportează probleme, propune idei și votează anonim!</p>
-        </div>
-    </div>
+    <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" id="toTop">▲</button>
+    
+    <main id="mainGrid">
 
-    <div class="container" id="studentView">
-        <div class="grid-container">
-
-            <div class="card">
-                <h3><span style="color: var(--danger);">🔴</span> Raportează o Problemă în Școală</h3>
-                <p>Spune-ne ce nu merge bine (anonim). Nu uita să fii clar și respectuos.</p>
-                <div class="card-body">
-                    <textarea id="problemInput" placeholder="Ex: Baia de la etajul 2 are o ușă stricată..."></textarea>
-                    <button class="btn btn-danger" onclick="submitData('problems', document.getElementById('problemInput'))">Trimite Problema</button>
-                    <div id="problemMessage" class="message"></div>
+        <aside id="adminSidebar">
+            <h3 style="margin-top: 0; color:var(--accent);">Administrare</h3>
+            
+            <div id="progressContainer" style="display: none; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 5px; color:white;">Status Probleme/Academice</h4>
+                <div class="progress-bar-container">
+                    <span id="progressBar" style="width: 0%;">
+                        <span id="progressPercent">0%</span>
+                    </span>
                 </div>
+                <div id="counts" style="margin-top: 5px;"></div>
             </div>
 
-            <div class="card">
-                <h3><span style="color: var(--success);">💡</span> Propune o Sugestie/Idee</h3>
-                <p>Ai o idee bună pentru a îmbunătăți viața școlară? Aici e locul!</p>
-                <div class="card-body">
-                    <textarea id="suggestionInput" placeholder="Ex: Să se introducă un club de dezbateri săptămânal..."></textarea>
-                    <button class="btn btn-success" onclick="submitData('suggestions', document.getElementById('suggestionInput'))">Trimite Sugestia</button>
-                    <div id="suggestionMessage" class="message"></div>
-                </div>
-            </div>
+            <div id="adminContent" style="display: none;">
+                <h4 style="color:var(--accent); margin-top:20px;">Adaugă Anunț</h4>
+                <form id="formAnnouncement">
+                    <label for="tipAnunt">Tip Anunț:</label>
+                    <select id="tipAnunt">
+                        <option value="General">General</option>
+                        <option value="Eveniment">Eveniment</option>
+                        <option value="Urgent">Urgent</option>
+                    </select>
+                    <label for="descrAnunt">Text Anunț:</label>
+                    <textarea id="descrAnunt" rows="3"></textarea>
+                    <button type="button" class="btn" id="sendAnunt" style="width: 100%;">Publică</button>
+                </form>
 
-            <div class="card">
-                <h3><span style="color: var(--info);">📢</span> Anunțuri și Evenimente</h3>
-                <p>Informații publicate de Consiliul Elevilor.</p>
-                <div id="announcementList" class="card-body">
-                    <p style="color: var(--secondary);">Niciun anunț publicat.</p>
-                </div>
-            </div>
+                <h4 style="color:var(--accent); margin-top:20px;">Adaugă Eveniment</h4>
+                <form id="formEvent">
+                    <label for="titluEvent">Titlu:</label>
+                    <input type="text" id="titluEvent" required>
+                    <label for="dataEvent">Dată:</label>
+                    <input type="date" id="dataEvent" required>
+                    <button type="button" class="btn" id="sendEvent" style="width: 100%;">Adaugă</button>
+                </form>
 
-            <div class="card">
-                <h3><span style="color: var(--warning);">⭐</span> Probleme Academice</h3>
-                <p>Dificultăți cu notele, tezele sau relația elev-profesor (anonim).</p>
-                <div class="card-body">
-                    <textarea id="academicInput" placeholder="Ex: Nu înțeleg materia X, ar fi utilă o sesiune de meditații..."></textarea>
-                    <button class="btn btn-warning" onclick="submitData('academics', document.getElementById('academicInput'))">Trimite Solicitarea</button>
-                    <div id="academicMessage" class="message"></div>
+                <h4 style="color:var(--accent); margin-top:20px;">Sondaj Admin</h4>
+                <div id="adminPollControls">
+                    <form id="formNewPoll">
+                        <label for="newPollTitle">Titlu Sondaj Nou:</label>
+                        <input type="text" id="newPollTitle" placeholder="Ce să facem?">
+                        <label for="newPollOptions">Opțiuni (una pe rând):</label>
+                        <textarea id="newPollOptions" rows="3" placeholder="Opțiunea 1&#10;Opțiunea 2&#10;..."></textarea>
+                        <button type="button" class="btn" id="startNewPoll" style="width: 100%;">Lansează Sondaj Nou</button>
+                    </form>
+                    <button type="button" class="btn urgent" id="resetVote" style="width: 100%; margin-top: 10px;">Reset Voturi Curent</button>
                 </div>
-            </div>
 
-            <div class="card" style="border: 2px solid var(--dark);">
-                <h3><span style="color: var(--dark);">🔒</span> Raportează Bullying (Strict Confidențial)</h3>
-                <p style="color: var(--dark); font-weight: bold;">Acest raport este vizibil DOAR de către administrator. Vă rugăm să oferiți detalii clare (loc, ora, persoane).</p>
-                <div class="card-body">
-                    <textarea id="bullyingInput" placeholder="Descrie situația în detaliu..."></textarea>
-                    <button class="btn" style="background-color: var(--dark); color: white;" onclick="submitData('bullying', document.getElementById('bullyingInput'))">Trimite Raport Confidențial</button>
-                    <div id="bullyingMessage" class="message"></div>
-                </div>
-            </div>
+                <h4 style="color:var(--accent); margin-top:20px;">Acțiuni Periculoase</h4>
+                <button type="button" class="btn urgent" id="clearAll" style="width: 100%;">Șterge TOATE Datele</button>
 
-            <div class="card">
-                <h3><span style="color: var(--primary);">🗳️</span> Sondaj Săptămânal</h3>
-                <div id="pollSection" class="card-body">
-                    <div id="pollQuestion">
-                        <p>Dacă ați putea schimba un lucru la școală săptămâna aceasta, care ar fi acela?</p>
+                <h4 id="bullyingListTitle" style="color:var(--accent); margin-top:20px; display:none;">Raportări Bullying (PRIVATE)</h4>
+                <div id="listBullying" class="list-container" style="margin-top: 10px;">
                     </div>
-                    <div class="poll-options">
-                        <label>
-                            <input type="radio" name="pollOption" value="orar"> Schimbarea orarului
-                        </label>
-                        <label>
-                            <input type="radio" name="pollOption" value="mancare"> Mâncarea de la cantină
-                        </label>
-                        <label>
-                            <input type="radio" name="pollOption" value="curatenie"> Curățenia în comun
-                        </label>
+            </div>
+        </aside>
+
+        <div class="main-content" style="grid-column: span 3;">
+            
+            <div class="card full-width" style="margin-bottom: 20px;">
+                <h3>📢 Anunțuri Oficiale</h3>
+                <div id="announcementsList" class="list-container">
                     </div>
-                    <button class="btn btn-primary" onclick="submitPollVote()">Votează</button>
-                    <div id="pollMessage" class="message"></div>
+            </div>
+
+            <div class="card">
+                <h3>📊 Sondajul Lunii</h3>
+                <h4 id="currentPollTitle" style="color:var(--primary);">[Titlu Sondaj]</h4>
+                <div id="pollOptions">
+                    </div>
+                <div id="pollControlsDiv" style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="button" class="btn" id="voteBtn">Votează</button>
                 </div>
-                <div id="pollResults" class="poll-results" style="display: none;">
-                    <h4>Rezultate Vot (Se poate vota o singură dată)</h4>
-                    <div id="resultsContainer"></div>
+                <h4 style="margin-top: 20px;">Rezultate:</h4>
+                <div id="pollResultsDiv">
+                    </div>
+            </div>
+
+            <div class="card">
+                <h3>📅 Calendar Școlar</h3>
+                <div id="calendarList" class="list-container" style="gap:0; border: 1px solid #eee;">
+                    </div>
+            </div>
+            
+            <div class="card" style="grid-column: span 3;">
+                <h3>📝 Trimite o Sesizare</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    
+                    <div style="border: 2px solid var(--probleme-color); padding: 15px; border-radius: 8px;">
+                        <h4 style="color:var(--probleme-color); margin-top:0;">Probleme (Locație, Echipament, Curățenie)</h4>
+                        <form id="formProbleme">
+                            <label for="locatie">Locație specifică:</label>
+                            <input type="text" id="locatie" placeholder="Ex: Sala 204, Curte" required>
+                            <label for="tipProblema">Tip problemă:</label>
+                            <select id="tipProblema" required>
+                                <option value="">Alege tipul</option>
+                                <option value="Echipament stricat">Echipament stricat</option>
+                                <option value="Defecțiuni instalații">Defecțiuni instalații</option>
+                                <option value="Curățenie">Curățenie</option>
+                                <option value="Altele">Altele</option>
+                            </select>
+                            <label for="descrProblema">Descriere:</label>
+                            <textarea id="descrProblema" rows="3" required></textarea>
+                            <label for="fotoProblema">Foto (Opțional, max 300KB):</label>
+                            <input type="file" id="fotoProblema" accept="image/*">
+                            <div id="previewProblema" style="margin-bottom: 10px; text-align: center;"></div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="button" class="btn urgent" id="sendProblemaUrgent" style="flex-grow: 1;">Trimite URGENT</button>
+                                <button type="button" class="btn" id="sendProblema" style="flex-grow: 1;">Trimite Normal</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="border: 2px solid var(--bullying-color); padding: 15px; border-radius: 8px;">
+                        <h4 style="color:var(--bullying-color); margin-top:0;">Raportare Bullying/Abuz (Strict Confidențial)</h4>
+                        <form id="formBullying">
+                            <label for="tipBullying">Tip incident (Opțional):</label>
+                            <input type="text" id="tipBullying" placeholder="Agresiune verbală, Fizică, Online">
+                            <label for="descrBullying">Descriere incident:</label>
+                            <textarea id="descrBullying" rows="3" required></textarea>
+                            <label style="display:flex; gap:5px; align-items:center;">
+                                <input type="checkbox" id="contactBullying"> Doresc să fiu contactat (Introduceți email)
+                            </label>
+                            <input type="email" id="emailBullying" placeholder="Email contact (opțional)">
+                            <button type="button" class="btn urgent" id="sendBullying" style="width: 100%;">Trimite Raportare</button>
+                        </form>
+                    </div>
+
+                    <div style="border: 2px solid var(--sugestii-color); padding: 15px; border-radius: 8px;">
+                        <h4 style="color:var(--sugestii-color); margin-top:0;">Sugestii & Idei Noi</h4>
+                        <form id="formSugestii">
+                            <label for="numeSug">Nume (Opțional):</label>
+                            <input type="text" id="numeSug" placeholder="Nume, Clasă (ex: Elev X, 10A)">
+                            <label for="descrSug">Descriere Sugestie:</label>
+                            <textarea id="descrSug" rows="3" required></textarea>
+                            <button type="button" class="btn" id="sendSug" style="width: 100%;">Trimite Sugestia</button>
+                        </form>
+                    </div>
+                    
+                    <div style="border: 2px solid var(--acad-color); padding: 15px; border-radius: 8px;">
+                        <h4 style="color:var(--acad-color); margin-top:0;">Solicitare Sprijin Academic/Consiliere</h4>
+                        <form id="formAcademice">
+                            <label for="tipAcad">Domeniu/Tip sprijin:</label>
+                            <select id="tipAcad" required>
+                                <option value="">Alege domeniul</option>
+                                <option value="Matematică">Matematică</option>
+                                <option value="Limba Română">Limba Română</option>
+                                <option value="Alte discipline">Alte discipline</option>
+                                <option value="Consiliere Psihologică">Consiliere Psihologică</option>
+                            </select>
+                            <label for="descrAcad">Detalii Solicitare:</label>
+                            <textarea id="descrAcad" rows="3" required></textarea>
+                            <button type="button" class="btn" id="sendAcad" style="width: 100%;">Trimite Solicitarea</button>
+                        </form>
+                    </div>
+
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <div class="container admin-view" id="adminView">
-        <div class="admin-sidebar">
-            <h4>Panou de Administrare</h4>
-            <button class="active" onclick="showAdminSection('problems')">Probleme <span id="problemsCount"></span></button>
-            <button onclick="showAdminSection('suggestions')">Sugestii <span id="suggestionsCount"></span></button>
-            <button onclick="showAdminSection('academics')">Academice <span id="academicsCount"></span></button>
-            <button onclick="showAdminSection('bullying')">Bullying (Conf.) <span id="bullyingCount"></span></button>
-            <button onclick="showAdminSection('announcements')">Gest. Anunțuri</button>
-            <button onclick="showAdminSection('poll')">Gest. Sondaj</button>
-        </div>
-        <div class="admin-content">
-
-            <div id="admin-problems" class="admin-section">
-                <h3>Sesizări Probleme Primite</h3>
-                <div id="problemsList"></div>
-            </div>
-
-            <div id="admin-suggestions" class="admin-section" style="display: none;">
-                <h3>Sugestii și Idei Primite</h3>
-                <div id="suggestionsList"></div>
-            </div>
-
-            <div id="admin-academics" class="admin-section" style="display: none;">
-                <h3>Solicitări Academice Primite</h3>
-                <div id="academicsList"></div>
-            </div>
-
-            <div id="admin-bullying" class="admin-section" style="display: none;">
-                <h3>Rapoarte Bullying (Confidențiale)</h3>
-                <div id="bullyingList"></div>
-            </div>
-
-            <div id="admin-announcements" class="admin-section" style="display: none;">
-                <h3>Publică Anunț Nou</h3>
-                <textarea id="announcementInput" placeholder="Scrie anunțul..."></textarea>
-                <button class="btn btn-info" onclick="addAnnouncement()">Publică Anunț</button>
-                <div style="margin-top: 20px;">
-                    <h4>Anunțuri Curente</h4>
-                    <div id="currentAnnouncementsList"></div>
+            <div class="card full-width" style="grid-column: span 3;">
+                <h3>🛠️ Probleme Raportate</h3>
+                <div id="filterProbleme" class="admin-controls" style="margin-bottom: 15px; display: none;">
+                    <input type="text" id="searchProbleme" oninput="renderProbleme()" placeholder="Caută după Locație/Descriere">
+                    <select id="statusFilterProbleme" onchange="renderProbleme()">
+                        <option value="all">Toate Statusurile</option>
+                        <option value="open">OPEN</option>
+                        <option value="inprogress">ÎN LUCRU</option>
+                        <option value="resolved">REZOLVAT</option>
+                    </select>
                 </div>
+                <div id="listProbleme" class="list-container">
+                    </div>
             </div>
 
-            <div id="admin-poll" class="admin-section" style="display: none;">
-                <h3>Gestionează Sondajul</h3>
-                <button class="btn btn-danger" onclick="resetPoll()">Resetează Voturile Sondajului</button>
-                <p style="margin-top: 15px;">**Atenție: Această acțiune șterge toate voturile curente și permite elevilor să voteze din nou.**</p>
+            <div class="card full-width" style="grid-column: span 3;">
+                <h3>💡 Sugestii Publice</h3>
+                <div id="listSugestii" class="list-container">
+                    </div>
             </div>
-
+            
+            <div class="card full-width" style="grid-column: span 3;">
+                <h3>📚 Solicitări Academice</h3>
+                <div id="filterAcad" class="admin-controls" style="margin-bottom: 15px; display: none;">
+                    <input type="text" id="searchAcad" oninput="renderAcad()" placeholder="Caută după Tip/Descriere">
+                    <select id="statusFilterAcad" onchange="renderAcad()">
+                        <option value="all">Toate Statusurile</option>
+                        <option value="open">OPEN</option>
+                        <option value="inprogress">ÎN LUCRU</option>
+                        <option value="resolved">REZOLVAT</option>
+                    </select>
+                </div>
+                <div id="listAcad" class="list-container">
+                    </div>
+            </div>
         </div>
-    </div>
 
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="document.getElementById('adminModal').style.display='none'">&times;</span>
-            <h2>Acces Mod Admin</h2>
-            <p>Introduceți parola pentru a accesa panoul de administrare.</p>
-            <input type="password" id="adminPasswordInput" placeholder="Parolă">
-            <button class="btn btn-primary" onclick="checkAdminPassword()">Intră</button>
-            <p id="passwordError" style="color: var(--danger); margin-top: 10px; display: none;">Parolă incorectă.</p>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    </main>
+    
     <script>
-        // *** CONFIGURARE ***
-        const GITHUB_USERNAME = 'danutz2469'; // Schimbați cu numele dvs. de utilizator GitHub
-        const REPO_NAME = 'vocea-elevilor-cni'; // Numele repozitoriului
-        const FILE_NAME = 'index.html'; // Numele fișierului pe care îl modificăm (acesta)
-        const ADMIN_PASSWORD = '1234'; // Parola de acces fixă pentru modul Admin
+        // --- CONSTANTE ȘI VARIABILE DE STARE ---
+        const KEY = 'school_hub_state_v4_3';
+        const ADMIN_PASSWORD = '1234';
+        let isAdminMode = localStorage.getItem('isAdminModeActive') === 'true'; // Preluare stare admin de la ultimul refresh
 
-        // Variabile globale
-        let data = {
-            problems: [],
-            suggestions: [],
-            academics: [],
-            bullying: [],
-            announcements: [],
-            poll: {
-                question: 'Dacă ați putea schimba un lucru la școală săptămâna aceasta, care ar fi acela?',
-                options: ['orar', 'mancare', 'curatenie'],
-                votes: { orar: 0, mancare: 0, curatenie: 0 }
-            }
+        let state = JSON.parse(localStorage.getItem(KEY)) || {
+            probleme: [], // Sesizări probleme (locație, echipament, status)
+            bullying: [], // Raportări bullying (strict confidențiale, doar pentru admin)
+            sugestii: [], // Sugestii și idei
+            acad: [], // Solicitări sprijin academic/consiliere
+            announcements: [], // Anunțuri oficiale (de la admin)
+            calendar: [], // Evenimente programate
+            poll: null, // Sondaj curent (titlu, opțiuni, voturi, hasVoted)
+            lastSeenAnnouncementId: 0 // ID-ul ultimului anunț văzut
         };
 
-        // *************** FUNCTII GITHUB API ***************
-
-        // Functie pentru a obtine datele curente din fisierul index.html
-        async function fetchCurrentData() {
-            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_NAME}`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const file = await response.json();
-                
-                const content = atob(file.content);
-                const startIndex = content.indexOf('// *** DATA START ***');
-                const endIndex = content.indexOf('// *** DATA END ***');
-                
-                if (startIndex !== -1 && endIndex !== -1) {
-                    const dataJson = content.substring(startIndex + 22, endIndex).trim();
-                    const parsedData = JSON.parse(dataJson);
-                    // Actualizăm baza de date locală cu ce este pe GitHub
-                    data = { ...data, ...parsedData };
-                    // Actualizăm sha-ul pentru viitoarele commit-uri
-                    window.fileSha = file.sha;
-                } else {
-                    console.error("Nu s-au găsit marcatorii de date în index.html. Se folosesc datele implicite.");
-                    window.fileSha = file.sha; // Tot avem nevoie de sha
-                }
-            } catch (error) {
-                console.error("Eroare la preluarea datelor curente de pe GitHub:", error);
-                // Dacă nu merge fetch-ul, se folosesc datele implicite
-            }
-            // Indiferent de succes, randăm pagina
-            renderUI();
+        // --- INIȚIALIZARE STATE V4.3 ---
+        
+        // Asigură că toate colecțiile au array-uri de comentarii (chiar dacă unele nu sunt afișate public)
+        state.probleme = state.probleme.map(p => ({ ...p, comments: p.comments || [] }));
+        state.sugestii = state.sugestii.map(s => ({ ...s, comments: s.comments || [] }));
+        state.acad = state.acad.map(a => ({ ...a, comments: a.comments || [] }));
+        state.bullying = state.bullying.map(b => ({ ...b, comments: b.comments || [] })); // Bullying NU are comentarii vizibile public
+        
+        // Conținut inițial (dacă lipsesc datele)
+        if(!state.poll || !state.poll.options) {
+            state.poll = {
+                title:'Ce activitate vrei prioritizată în următoarea lună?', 
+                options:['Club foto', 'Atelier teatru', 'Green corner'], 
+                votes:new Array(3).fill(0), 
+                hasVoted: false
+            };
+        } else if(!state.poll.votes || state.poll.votes.length !== state.poll.options.length) {
+             // Asigură că vectorul de voturi corespunde opțiunilor
+             state.poll.votes = new Array(state.poll.options.length).fill(0);
+        }
+        
+        if(!state.calendar || state.calendar.length === 0) {
+            state.calendar = [
+                {id: 1, title: "Simulare BAC (Română, Matematică)", date: "2026-01-20"},
+                {id: 2, title: "Ședință cu Părinții", date: "2025-12-15"},
+                {id: 3, title: "Ziua Porților Deschise", date: "2026-03-05"}
+            ];
         }
 
-        // Functie pentru a trimite datele inapoi la GitHub (Efectiv Salvarea)
-        async function commitDataToGitHub(commitMessage) {
-            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_NAME}`;
-            
-            // 1. Recreeaza continutul complet al fisierului index.html
-            const currentHTML = document.documentElement.outerHTML;
-            
-            // 2. Extrage sectiunile de inceput si de sfarsit
-            const startMarker = `// *** DATA START ***\n`;
-            const endMarker = `// *** DATA END ***`;
-            
-            let newContent = currentHTML;
-            let dataString = JSON.stringify(data, null, 4);
+        // Sortează evenimentele cronologic
+        state.calendar.sort((a, b) => new Date(a.date) - new Date(b.date));
+        // --- Sfârșit Inițializare State V4.3 ---
 
-            // Cautam si inlocuim vechea zona de date cu cea noua
-            const regex = new RegExp(`(?<=${startMarker})[\\s\\S]*?(?=${endMarker})`, 'm');
+        // Cache DOM elements
+        const listProbleme=document.getElementById('listProbleme'),listBullying=document.getElementById('listBullying'),listSugestii=document.getElementById('listSugestii'),listAcad=document.getElementById('listAcad'),countsSpan=document.getElementById('counts'),navLinks=document.getElementById('navLinks'),burger=document.getElementById('burger'),toTopBtn=document.getElementById('toTop'),voteBtn=document.getElementById('voteBtn'),resetVoteBtn=document.getElementById('resetVote'),pollOptionsDiv=document.getElementById('pollOptions'),pollControlsDiv=document.getElementById('pollControls'),pollResultsDiv=document.getElementById('pollResults'),formProbleme=document.getElementById('formProbleme'),formBullying=document.getElementById('formBullying'),formSugestii=document.getElementById('formSugestii'),formAcademice=document.getElementById('formAcademice'),addAnnouncementForm=document.getElementById('addAnnouncementForm'),announcementsList=document.getElementById('announcementsList'),formAnnouncement=document.getElementById('formAnnouncement'),calendarList=document.getElementById('calendarList'),addEventForm=document.getElementById('formEvent'),toast=document.getElementById('toast'),adminPollControls=document.getElementById('adminPollControls'),startNewPollBtn=document.getElementById('startNewPoll'), announcementBadge=document.getElementById('announcement-badge'), progressBar=document.getElementById('progressBar'), progressPercent=document.getElementById('progressPercent'), adminSidebar=document.getElementById('adminSidebar'), mainGrid=document.getElementById('mainGrid'), adminContent=document.getElementById('adminContent');
+        
+        // Utility Functions
+        function persist(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+        function statusClass(s){ if(s==='open') return 'open'; if(s==='inprogress') return 'progress'; return 'resolved'; }
+        function statusLabel(s){ if(s==='open') return 'OPEN'; if(s==='inprogress') return 'ÎN LUCRU'; return 'REZOLVAT'; }
+        function nextId(collection) { return (collection.length > 0 ? Math.max(...collection.map(item => item.id)) : 0) + 1; }
+        
+        function showToast(message, isError = false){
+            toast.innerHTML = isError ? `⚠️ ${message}` : `✅ ${message}`;
+            toast.style.background = isError ? '#ef4444' : '#1e3a8a';
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function markAnnouncementsSeen() {
+            if (state.announcements.length > 0) {
+                state.lastSeenAnnouncementId = state.announcements[0].id;
+                persist();
+                renderTopBar();
+            }
+        }
+        
+        function renderTopBar() {
+            const lastSeen = state.lastSeenAnnouncementId || 0;
+            const newAnnouncements = state.announcements.filter(a => a.id > lastSeen).length;
             
-            if (regex.test(newContent)) {
-                 newContent = newContent.replace(regex, `${dataString}\n`);
+            if (newAnnouncements > 0) {
+                announcementBadge.textContent = newAnnouncements;
+                announcementBadge.style.display = 'inline-block';
             } else {
-                // Daca markerii nu exista (prima rulare), ii adaugam
-                console.warn("Markerii de date nu au fost găsiți. Vă rugăm să vă asigurați că aveți // *** DATA START *** și // *** DATA END *** la sfârșitul fișierului.");
+                announcementBadge.style.display = 'none';
+            }
+        }
+
+        function renderProgress() {
+            const totalProblems = state.probleme.length + state.acad.length;
+            const resolvedProblems = state.probleme.filter(p => p.status === 'resolved').length + state.acad.filter(a => a.status === 'resolved').length;
+            
+            let percent = 0;
+            if (totalProblems > 0) {
+                percent = Math.round((resolvedProblems / totalProblems) * 100);
             }
 
-            // 3. Encodeaza continutul in base64
-            const contentBase64 = btoa(newContent);
+            progressPercent.textContent = `${percent}%`;
+            progressBar.style.width = `${percent}%`;
+            countsSpan.textContent = `Total: ${totalProblems} | Rezolvate: ${resolvedProblems}`;
+        }
+
+        // --- Randare Generică Listă (cu Comentarii și Admin Controls) ---
+        function renderList(listElement, data, type, showFilters = false) {
+            listElement.innerHTML = '';
             
-            const payload = {
-                message: commitMessage,
-                content: contentBase64,
-                sha: window.fileSha, // SHA-ul obținut la fetch
-                branch: 'main'
+            // Logica de filtrare/căutare (aplicabilă doar la Probleme și Academice)
+            let filteredData = [...data].reverse(); // Cele mai noi primele
+            const searchId = document.getElementById(`search${type}`) ? document.getElementById(`search${type}`).value.toLowerCase() : '';
+            const statusId = document.getElementById(`statusFilter${type}`) ? document.getElementById(`statusFilter${type}`).value : 'all';
+
+            if (showFilters && isAdminMode) {
+                document.getElementById(`filter${type}`).style.display = 'flex';
+                
+                // Filtrare după status
+                if (statusId !== 'all') {
+                    filteredData = filteredData.filter(item => item.status === statusId);
+                }
+
+                // Filtrare după text
+                if (searchId) {
+                    filteredData = filteredData.filter(item => 
+                        (item.locatie && item.locatie.toLowerCase().includes(searchId)) ||
+                        (item.tip && item.tip.toLowerCase().includes(searchId)) ||
+                        (item.descr && item.descr.toLowerCase().includes(searchId)) ||
+                        (item.numeSug && item.numeSug.toLowerCase().includes(searchId)) ||
+                        (item.email && item.email.toLowerCase().includes(searchId))
+                    );
+                }
+            } else if(showFilters && document.getElementById(`filter${type}`)) {
+                 document.getElementById(`filter${type}`).style.display = 'none';
+            }
+
+            if (filteredData.length === 0) {
+                listElement.innerHTML = `<div style="padding:15px; text-align:center; color:var(--muted); font-style:italic;">Nu există înregistrări în această categorie.</div>`;
+                return;
+            }
+
+            filteredData.forEach(item => {
+                let thumbContent = '';
+                let statusInfo = '';
+                let details = '';
+                let categoryClass = '';
+                let date = new Date(item.date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).replace(',', ' ');
+                
+                // Setare detalii specifice tipului
+                switch(type) {
+                    case 'Probleme':
+                        categoryClass = 'cat-probleme';
+                        statusInfo = `<span class="status ${statusClass(item.status)}">${statusLabel(item.status)}</span>`;
+                        thumbContent = item.foto ? `<img src="${item.foto}" alt="Foto">` : `<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M11 9h2v6h-2V9zm0-4h2v2h-2V5zM12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z"/></svg>`;
+                        details = `<p style="font-size:14px; margin: 4px 0 0;"><strong>Locație:</strong> ${item.locatie || 'Nespecificat'}</p>
+                                    <p style="font-size:14px; margin: 2px 0 0;"><strong>Tip:</strong> ${item.tip || 'Alte probleme'}</p>`;
+                        break;
+                    case 'Bullying':
+                        categoryClass = 'cat-bullying';
+                        thumbContent = `<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7v3H3l4 4v3h10v-3l4-4h-2V9a7 7 0 0 0-7-7z"/></svg>`;
+                        details = `<p style="font-size:14px; margin: 4px 0 0;"><strong>Tip:</strong> ${item.tip || 'General'}</p>`;
+                        if (isAdminMode) {
+                            details += `<p style="font-size:14px; margin: 2px 0 0; color:var(--probleme-color);"><strong>Contact:</strong> ${item.email || 'Anonim'}</p>`;
+                        }
+                        break;
+                    case 'Sugestii':
+                        categoryClass = 'cat-sugestii';
+                        thumbContent = `<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9 21h6v-2H9v2zm6.6-10.2l-1.2 1.2-2.4-2.4L9 13.8V7h6.6zM3 5h6V3H3v2z"/></svg>`;
+                        details = `<p style="font-size:14px; margin: 4px 0 0;"><strong>Autor:</strong> ${item.numeSug || 'Anonim'}</p>`;
+                        break;
+                    case 'Acad':
+                        categoryClass = 'cat-acad';
+                        statusInfo = `<span class="status ${statusClass(item.status)}">${statusLabel(item.status)}</span>`;
+                        thumbContent = `<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2z"/></svg>`;
+                        details = `<p style="font-size:14px; margin: 4px 0 0;"><strong>Tip:</strong> ${item.tip || 'General'}</p>`;
+                        break;
+                }
+
+                let commentsHtml = '';
+                // Comentariile NU sunt afișate pentru Bullying
+                if (type !== 'Bullying') { 
+                    const commentCount = item.comments.length;
+                    
+                    // Numele autorului pentru Comentarii trebuie să fie consistent
+                    const commentType = type === 'Sugestii' ? 'Sugestii' : (type === 'Acad' ? 'Acad' : 'Probleme');
+
+                    commentsHtml = `
+                        <div class="comments-section">
+                            <h4 style="margin: 0 0 8px; font-size: 14px; color:var(--primary); font-weight: 700;">Comentarii (${commentCount})</h4>
+                            <div style="max-height: 150px; overflow-y: auto; padding-right: 5px;">
+                                ${item.comments.map(c => `
+                                    <div class="comment-item">
+                                        ${c.text}
+                                        <span class="comment-meta">${c.author} | ${new Date(c.date).toLocaleDateString('ro-RO')}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="comment-form-container">
+                                <textarea id="commentText${commentType}${item.id}" placeholder="Adaugă un comentariu (Nume: opțional)"></textarea>
+                                <button class="btn" onclick="addComment('${commentType}', ${item.id}, document.getElementById('commentText${commentType}${item.id}').value)">Comentează</button>
+                            </div>
+                        </div>
+                    `;
+                } 
+
+                // Generare Admin Controls (vizibile doar în Mod Admin)
+                let adminControlsHtml = '';
+                if (isAdminMode && (type === 'Probleme' || type === 'Acad' || type === 'Bullying' || type === 'Sugestii')) {
+                    const statusOptions = ['open', 'inprogress', 'resolved'].map(s => 
+                        `<option value="${s}" ${item.status === s ? 'selected' : ''}>${statusLabel(s)}</option>`
+                    ).join('');
+
+                    // Bullying și Sugestii nu au status, dar au opțiune de ștergere
+                    if (type !== 'Bullying' && type !== 'Sugestii') {
+                        adminControlsHtml = `
+                            <div class="admin-controls">
+                                <label style="font-size:14px; color:var(--muted); font-weight:600;">Schimbă status:</label>
+                                <select onchange="changeStatus('${type}', ${item.id}, this.value)">
+                                    ${statusOptions}
+                                </select>
+                                <button class="btn urgent" style="flex-grow:1;" onclick="deleteItem('${type}', ${item.id})">Șterge</button>
+                            </div>
+                        `;
+                    } else {
+                        // Pentru Sugestii și Bullying (fără status)
+                        adminControlsHtml = `
+                            <div class="admin-controls">
+                                <button class="btn urgent" style="width:100%;" onclick="deleteItem('${type}', ${item.id})">Șterge ${type === 'Bullying' ? 'Raportare' : 'Sugestie'}</button>
+                            </div>
+                        `;
+                    }
+                }
+
+                listElement.innerHTML += `
+                    <div class="item ${categoryClass}" data-id="${item.id}">
+                        <div style="display:flex;gap:12px;align-items:flex-start">
+                            <div class="thumb">${thumbContent}</div>
+                            <div style="flex-grow:1;">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                                    <div style="font-weight:700;font-size:15px;color:#111; max-width: 80%;">${item.descr.substring(0, 100)}${item.descr.length > 100 ? '...' : ''}</div>
+                                    ${statusInfo}
+                                </div>
+                                ${details}
+                                <div class="meta" style="margin-top: 5px;">Trimis la: ${date}</div>
+                            </div>
+                        </div>
+                        ${adminControlsHtml}
+                        ${commentsHtml}
+                    </div>
+                `;
+            });
+
+            // Asigură că funcțiile de auto-resize la textarea commentează funcționează.
+            listElement.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', () => {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = (textarea.scrollHeight) + 'px';
+                });
+            });
+        }
+        
+        // --- Randare Liste Specifice ---
+        function renderProbleme() { renderList(listProbleme, state.probleme, 'Probleme', true); renderProgress(); }
+        function renderBullying() { 
+            const bullyingListTitle = document.getElementById('bullyingListTitle');
+            if(bullyingListTitle) bullyingListTitle.style.display = isAdminMode ? 'block' : 'none';
+            listBullying.style.display = isAdminMode ? 'flex' : 'none';
+            if (isAdminMode) {
+                 renderList(listBullying, state.bullying, 'Bullying'); 
+            }
+        }
+        function renderSugestii() { renderList(listSugestii, state.sugestii, 'Sugestii'); }
+        function renderAcad() { renderList(listAcad, state.acad, 'Acad', true); renderProgress(); }
+        
+        // --- Randare Anunțuri ---
+        function renderAnnouncements() {
+            announcementsList.innerHTML = '';
+            const sortedAnnouncements = [...state.announcements].reverse(); // Cel mai nou primul
+
+            if (sortedAnnouncements.length === 0) {
+                 announcementsList.innerHTML = `<div style="padding:15px; text-align:center; color:var(--muted); font-style:italic;">Nu există anunțuri oficiale.</div>`;
+                 return;
+            }
+
+            sortedAnnouncements.forEach(ann => {
+                const date = new Date(ann.date).toLocaleDateString('ro-RO');
+                const isNew = ann.id > state.lastSeenAnnouncementId;
+                const isUrgent = ann.type === 'Urgent';
+                
+                announcementsList.innerHTML += `
+                    <div class="item cat-resurse" style="border-left:5px solid ${isUrgent ? 'var(--probleme-color)' : 'var(--resurse-color)'};">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                             <div style="font-weight:700; font-size:15px; color:#111;">
+                                 ${ann.type} ${isNew ? '<span class="status open" style="margin-left:8px;">NOU</span>' : ''}
+                             </div>
+                             ${isAdminMode ? `<button class="btn urgent" style="padding:4px 8px; font-size:11px;" onclick="deleteItem('Announcements', ${ann.id})">Șterge</button>` : ''}
+                        </div>
+                        <p style="font-size:14px; margin: 4px 0 6px;">${ann.descr}</p>
+                        <div class="meta">Publicat la: ${date}</div>
+                    </div>
+                `;
+            });
+            // Marchează anunțurile ca văzute când sunt afișate
+            markAnnouncementsSeen();
+        }
+
+        // --- Randare Sondaj ---
+        function renderPoll() {
+            const poll = state.poll;
+            document.getElementById('currentPollTitle').textContent = poll.title;
+            pollOptionsDiv.innerHTML = '';
+            pollResultsDiv.innerHTML = '';
+            
+            // Administrare vizibilitate
+            if(adminPollControls) adminPollControls.style.display = isAdminMode ? 'block' : 'none';
+            if(pollControlsDiv) pollControlsDiv.style.display = 'flex'; // Votul/Resetul e vizibil
+            if(resetVoteBtn) resetVoteBtn.style.display = isAdminMode ? 'block' : 'none'; // Reset vot vizibil doar admin
+            
+            
+            // Opțiuni vot
+            if (!poll.hasVoted || isAdminMode) {
+                poll.options.forEach((option, index) => {
+                    pollOptionsDiv.innerHTML += `
+                        <label style="font-size:14px; display:flex; gap:8px; align-items:center;">
+                            <input type="radio" name="pollOption" value="${index}" ${poll.hasVoted && !isAdminMode ? 'disabled' : ''}> 
+                            ${option}
+                        </label>
+                    `;
+                });
+                if(voteBtn) {
+                    voteBtn.onclick = handleVote;
+                    voteBtn.disabled = poll.hasVoted && !isAdminMode;
+                    voteBtn.textContent = poll.hasVoted && !isAdminMode ? 'Ai Votat' : 'Votează';
+                }
+            } else {
+                pollOptionsDiv.innerHTML = '<p style="color:var(--muted); font-style:italic;">Ai votat deja. Vezi rezultatele mai jos.</p>';
+            }
+            
+            // Rezultate
+            const totalVotes = poll.votes.reduce((sum, current) => sum + current, 0);
+            poll.options.forEach((option, index) => {
+                const votes = poll.votes[index];
+                const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+                pollResultsDiv.innerHTML += `
+                    <div style="font-size:14px; font-weight:600; color:var(--muted); margin-bottom: 2px;">${option} (${votes} voturi / ${percent}%)</div>
+                    <div class="bar" style="margin-bottom:10px;">
+                        <span style="width:${percent}%"></span>
+                    </div>
+                `;
+            });
+            pollResultsDiv.innerHTML += `<div style="font-size:12px; font-weight:700; text-align:right; color:var(--primary);">Total Voturi: ${totalVotes}</div>`;
+        }
+        
+        // --- Randare Calendar ---
+        function renderCalendar() {
+            calendarList.innerHTML = '';
+            if (addEventForm) addEventForm.parentNode.style.display = isAdminMode ? 'block' : 'none';
+            
+            if (state.calendar.length === 0) {
+                 calendarList.innerHTML = `<div style="padding:15px; text-align:center; color:var(--muted); font-style:italic;">Nu sunt evenimente programate.</div>`;
+                 return;
+            }
+
+            state.calendar.forEach(event => {
+                const date = new Date(event.date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Normalizează pentru comparație corectă
+                const isPast = date < today;
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = date.toLocaleDateString('ro-RO', { month: 'short' });
+
+                calendarList.innerHTML += `
+                    <div style="display:flex;gap:12px;align-items:flex-start;padding:8px;border-bottom:1px solid #eee; opacity:${isPast ? 0.6 : 1};">
+                        <div style="width:40px;height:40px;border-radius:6px;background:${isPast ? '#ccc' : 'var(--primary)'};color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">
+                            <div>${day}</div>
+                            <div style="text-transform:uppercase;font-size:10px;margin-top:-2px;">${month.substring(0, 3)}</div>
+                        </div>
+                        <div style="flex-grow:1; font-size:14px; color:#333;">
+                            <div style="font-weight:600;">${event.title}</div>
+                            <div style="font-size:12px; color:var(--muted);">${new Date(event.date).toLocaleDateString('ro-RO')}</div>
+                        </div>
+                        ${isAdminMode ? `<button class="btn urgent" style="padding:4px 8px; font-size:11px;" onclick="deleteItem('Calendar', ${event.id})">Șterge</button>` : ''}
+                    </div>
+                `;
+            });
+        }
+        
+        // --- Funcții de Administrare Date ---
+        function changeStatus(type, id, newStatus) {
+            if (!isAdminMode) return;
+            const collectionName = type.toLowerCase();
+            const index = state[collectionName].findIndex(item => item.id === id);
+            
+            if (index > -1) {
+                state[collectionName][index].status = newStatus;
+                persist();
+                showToast(`Statusul pentru ${type} #${id} a fost actualizat la ${statusLabel(newStatus)}.`);
+                // Rerandează lista afectată
+                if (type === 'Probleme') renderProbleme();
+                else if (type === 'Acad') renderAcad();
+                renderProgress();
+            }
+        }
+
+        function deleteItem(type, id) {
+             if (!isAdminMode) {
+                 showToast('Nu ai permisiunea de a șterge elemente.', true);
+                 return;
+             }
+             if (!confirm(`Ești sigur că vrei să ștergi acest element din secțiunea ${type} (ID: ${id})? Această acțiune este permanentă.`)) {
+                 return;
+             }
+            
+            const collectionName = type === 'Announcements' ? 'announcements' : (type === 'Calendar' ? 'calendar' : type.toLowerCase());
+            state[collectionName] = state[collectionName].filter(item => item.id !== id);
+            
+            persist();
+            showToast(`${type} (ID: ${id}) a fost șters.`);
+            
+            // Rerandează secțiunile
+            if (type === 'Probleme') renderProbleme();
+            else if (type === 'Bullying') renderBullying();
+            else if (type === 'Sugestii') renderSugestii();
+            else if (type === 'Acad') renderAcad();
+            else if (type === 'Announcements') renderAnnouncements();
+            else if (type === 'Calendar') renderCalendar();
+            
+            renderProgress();
+            renderTopBar(); // Poate afecta badge-ul de anunțuri
+        }
+
+        // --- FIX Comentarii ---
+        function addComment(type, id, commentText) {
+            let collectionName;
+            
+            // Fix: Mapează numele de tip la cheia corectă din state
+            if (type === 'Probleme') collectionName = 'probleme';
+            else if (type === 'Sugestii') collectionName = 'sugestii';
+            else if (type === 'Acad') collectionName = 'acad';
+            else { showToast('Tip de colecție invalid pentru comentariu.', true); return; }
+
+            let author = 'Anonim';
+            let text = commentText.trim();
+            
+            // Logica de extragere nume
+            const nameMatch = text.match(/nume:(\s*)?([^()]+)/i);
+            const parentheseMatch = text.match(/\(([^)]+)\)$/);
+            
+            if (nameMatch) {
+                author = nameMatch[2].trim();
+                text = text.replace(nameMatch[0], '').trim();
+            } else if (parentheseMatch && parentheseMatch[1].length > 0 && parentheseMatch[1].length < 20) {
+                 author = parentheseMatch[1].trim();
+                 text = text.replace(parentheseMatch[0], '').trim();
+            }
+
+            if (text.length < 5) {
+                showToast('Comentariul este prea scurt (minim 5 caractere).', true);
+                return;
+            }
+
+            const item = state[collectionName].find(i => i.id === id);
+            
+            if (item) {
+                item.comments.push({
+                    text: text,
+                    author: author,
+                    date: new Date().toISOString()
+                });
+                persist();
+                showToast(`Comentariul a fost adăugat la ${type} #${id}.`);
+                
+                // Curăță și re-rendează lista corespunzătoare
+                document.getElementById(`commentText${type}${id}`).value = '';
+                if (type === 'Probleme') renderProbleme();
+                else if (type === 'Sugestii') renderSugestii();
+                else if (type === 'Acad') renderAcad();
+            }
+        }
+        
+        // --- Securitate și Mod Admin ---
+        
+        document.getElementById('toggleAdmin').addEventListener('click', toggleAdmin);
+
+        function updateAdminUI() {
+            const button = document.getElementById('toggleAdmin');
+            
+            if (isAdminMode) {
+                // Mod Admin Activ: Afișează sidebar, schimbă grila, actualizează butonul
+                adminSidebar.classList.add('admin-visible');
+                mainGrid.classList.add('admin-visible');
+                adminContent.style.display = 'block'; 
+                button.textContent = 'Ieși Mod Admin';
+                button.classList.add('urgent');
+            } else {
+                // Mod Normal Activ
+                adminSidebar.classList.remove('admin-visible');
+                mainGrid.classList.remove('admin-visible');
+                adminContent.style.display = 'none'; 
+                button.textContent = 'Intră Mod Admin';
+                button.classList.remove('urgent');
+            }
+
+            // Re-rendează tot
+            renderProbleme();
+            renderBullying();
+            renderSugestii(); 
+            renderAcad();
+            renderAnnouncements();
+            renderCalendar();
+            renderPoll();
+            
+            // Administrare vizibilitate formulare Admin
+            if(addAnnouncementForm) addAnnouncementForm.style.display = isAdminMode ? 'block' : 'none';
+            if(adminPollControls) adminPollControls.style.display = isAdminMode ? 'block' : 'none';
+            if(addEventForm) addEventForm.parentNode.style.display = isAdminMode ? 'block' : 'none';
+            
+            // Bară de progres vizibilă doar în Mod Admin
+            const progressContainer = document.getElementById('progressContainer');
+            if(progressContainer) progressContainer.style.display = isAdminMode ? 'block' : 'none';
+            if(countsSpan) countsSpan.style.display = isAdminMode ? 'block' : 'none';
+            if (isAdminMode) renderProgress(); 
+        }
+        
+        function toggleAdmin() {
+            if (isAdminMode) {
+                // Ieșire din Mod Admin
+                isAdminMode = false;
+                showToast('Mod Admin dezactivat. Văzut ca elev.');
+            } else {
+                // Încercare de a intra în Mod Admin
+                const password = prompt("🔒 Introduceți parola de administrare (1234):");
+
+                if (password === ADMIN_PASSWORD) { // Verificare directă cu parola fixă
+                    isAdminMode = true;
+                    showToast('Acces Admin acordat.');
+                } else if (password !== null) {
+                    showToast('Parolă incorectă.', true);
+                    return;
+                } else {
+                    return; // Anulare
+                }
+            }
+
+            updateAdminUI();
+            // Păstrăm starea de admin activă la reload (opțional, dar util)
+            localStorage.setItem('isAdminModeActive', isAdminMode); 
+        }
+
+        // --- Event Listeners (Trimitere Formulare) ---
+        
+        // 1. Probleme
+        document.getElementById('sendProblema').addEventListener('click', () => sendProblem(false));
+        document.getElementById('sendProblemaUrgent').addEventListener('click', () => sendProblem(true));
+        document.getElementById('clearProblema').addEventListener('click', () => formProbleme.reset());
+        document.getElementById('fotoProblema').addEventListener('change', previewImage);
+        
+        document.getElementById('contactBullying').addEventListener('change', (e) => {
+            document.getElementById('emailBullying').disabled = !e.target.checked;
+            if (!e.target.checked) document.getElementById('emailBullying').value = '';
+        });
+
+        function sendProblem(isUrgent) {
+            const descr = document.getElementById('descrProblema').value.trim();
+            const locatie = document.getElementById('locatie').value.trim();
+            const tip = document.getElementById('tipProblema').value.trim();
+            const fotoInput = document.getElementById('fotoProblema');
+            let fotoBase64 = null;
+
+            if (descr.length < 5) { showToast('Descrierea este prea scurtă.', true); return; }
+            if (!locatie) { showToast('Introduceți o locație (ex: Sala 204).', true); return; }
+            if (!tip) { showToast('Selectați tipul problemei.', true); return; }
+            
+            const processSubmission = (base64) => {
+                const newId = nextId(state.probleme);
+                const newProblem = {
+                    id: newId,
+                    locatie: locatie,
+                    tip: tip,
+                    descr: descr,
+                    foto: base64,
+                    date: new Date().toISOString(),
+                    status: 'open',
+                    urgent: isUrgent,
+                    comments: []
+                };
+                state.probleme.push(newProblem);
+                persist();
+                formProbleme.reset();
+                document.getElementById('previewProblema').innerHTML = '';
+                showToast(`Sesizarea #${newId} a fost trimisă cu succes! ${isUrgent ? 'URGENT' : ''}`);
+                renderProbleme();
             };
 
-            try {
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${getGitHubToken()}`, // Folosim token-ul stocat
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    // Eroare 409: Conflict (de obicei, altcineva a modificat sau sha-ul este vechi)
-                    if (response.status === 409) {
-                        alert("Eroare de conflict! Altcineva a trimis o sesizare chiar acum. Încercați din nou.");
-                        return false;
+            if (fotoInput.files.length > 0) {
+                const file = fotoInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Limitează dimensiunea imaginii la 300KB
+                    if (e.target.result.length > 300000) { 
+                        showToast('Imaginea este prea mare (max 300KB). Vă rugăm folosiți o imagine mai mică.', true); 
+                        return;
                     }
-                    throw new Error(`Commit failed with status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                window.fileSha = result.content.sha; // Actualizează SHA-ul pentru următoarea salvare
-                return true;
-
-            } catch (error) {
-                console.error("Eroare la commit:", error);
-                alert("A apărut o eroare la salvarea datelor pe GitHub. Verificați token-ul sau conexiunea.");
-                return false;
-            }
-        }
-        
-        // Functia placeholder pentru token-ul GitHub.
-        // Datorita restrictiilor de securitate, utilizatorul trebuie sa introduca token-ul in localStorage.
-        function getGitHubToken() {
-            // Exemplu: Daca userul ar introduce un token in localStorage
-            // window.localStorage.setItem('gh_token', 'ghp_XXXXXXXXXXXXXX');
-            // return window.localStorage.getItem('gh_token');
-            // Pentru ca nu am cerut token-ul, vom lasa null (se va face commit-ul automat doar la login)
-            return null;
-        }
-
-        // *************** FUNCTII LOGARE ADMIN ***************
-        
-        function checkAdminPassword() {
-            const input = document.getElementById('adminPasswordInput').value;
-            const errorElement = document.getElementById('passwordError');
-
-            if (input === ADMIN_PASSWORD) {
-                // Logare cu succes
-                localStorage.setItem('isAdmin', 'true');
-                document.getElementById('adminModal').style.display = 'none';
-                enterAdminMode();
+                    processSubmission(e.target.result);
+                };
+                reader.onerror = function() {
+                    showToast('Eroare la citirea fișierului foto.', true);
+                };
+                reader.readAsDataURL(file);
             } else {
-                errorElement.style.display = 'block';
-                setTimeout(() => errorElement.style.display = 'none', 3000);
+                processSubmission(null);
             }
         }
 
-        function enterAdminMode() {
-            document.getElementById('studentView').style.display = 'none';
-            document.getElementById('adminView').style.display = 'grid';
-            document.getElementById('adminLoginBtn').style.display = 'none';
-            document.getElementById('adminLogoutBtn').style.display = 'block';
-            showAdminSection('problems'); // Deschide default problems
-            renderAdminContent();
+        function previewImage(event) {
+            const previewDiv = document.getElementById('previewProblema');
+            previewDiv.innerHTML = '';
+            const files = event.target.files;
+            if (files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewDiv.innerHTML = `<div class="thumb" style="width:100px; height:100px; margin:0 auto;"><img src="${e.target.result}" alt="Preview"></div>`;
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        }
+        
+        // 2. Bullying
+        document.getElementById('sendBullying').addEventListener('click', sendBullying);
+        if(document.getElementById('clearBullying')) document.getElementById('clearBullying').addEventListener('click', () => formBullying.reset());
+
+        function sendBullying() {
+            const tip = document.getElementById('tipBullying').value.trim();
+            const descr = document.getElementById('descrBullying').value.trim();
+            const contact = document.getElementById('contactBullying').checked;
+            const email = document.getElementById('emailBullying').value.trim();
+
+            if (descr.length < 5) { showToast('Descrierea este prea scurtă.', true); return; }
+            if (contact && (!email || !email.includes('@'))) { showToast('Introduceți un email valid dacă doriți să fiți contactat.', true); return; }
+            
+            const newId = nextId(state.bullying);
+            const newBullying = {
+                id: newId,
+                tip: tip || 'Anonim',
+                descr: descr,
+                email: contact ? email : null,
+                date: new Date().toISOString(),
+                comments: [] // Comentariile nu sunt afișate public la bullying
+            };
+            state.bullying.push(newBullying);
+            persist();
+            formBullying.reset();
+            showToast(`Raportarea #${newId} a fost trimisă anonim.`);
+            // Nu rerandează lista pentru utilizatorul normal, doar pentru admin la următoarea logare/refresh
         }
 
-        function exitAdminMode() {
-            localStorage.removeItem('isAdmin');
-            document.getElementById('studentView').style.display = 'block';
-            document.getElementById('adminView').style.display = 'none';
-            document.getElementById('adminLoginBtn').style.display = 'block';
-            document.getElementById('adminLogoutBtn').style.display = 'none';
-            renderUI(); // Re-randare pentru a ascunde elemente admin
-        }
-        
-        // *************** FUNCTII UI ADMIN ***************
-        
-        function showAdminSection(sectionName) {
-            document.querySelectorAll('.admin-section').forEach(el => el.style.display = 'none');
-            document.getElementById(`admin-${sectionName}`).style.display = 'block';
-            
-            document.querySelectorAll('.admin-sidebar button').forEach(el => el.classList.remove('active'));
-            document.querySelector(`.admin-sidebar button[onclick*="${sectionName}"]`).classList.add('active');
-            
-            renderAdminContent(); // Re-randare la schimbarea secțiunii
-        }
-        
-        function renderAdminContent() {
-            renderList('problems', 'problemsList', true);
-            renderList('suggestions', 'suggestionsList', true);
-            renderList('academics', 'academicsList', true);
-            renderList('bullying', 'bullyingList', true, true);
-            renderAnnouncementsAdmin();
-            updateAdminCounts();
-        }
-        
-        function renderList(dataType, listId, isAdmin = false, isBullying = false) {
-            const listElement = document.getElementById(listId);
-            listElement.innerHTML = '';
-            
-            if (data[dataType] && data[dataType].length > 0) {
-                data[dataType].forEach((item, index) => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = `data-item ${isBullying ? 'bullying' : ''}`;
-                    itemDiv.innerHTML = `
-                        <span class="date">${new Date(item.timestamp).toLocaleDateString('ro-RO')} ${new Date(item.timestamp).toLocaleTimeString('ro-RO')}</span>
-                        <strong>${item.title || 'Raport Anonim'}</strong>
-                        ${item.content}
-                        ${isAdmin ? `<button class="btn btn-danger" style="margin-top: 10px;" onclick="deleteData('${dataType}', ${index})">Șterge</button>` : ''}
-                    `;
-                    listElement.appendChild(itemDiv);
-                });
-            } else {
-                listElement.innerHTML = `<p style="color: var(--secondary);">Nu există ${dataType} primite.</p>`;
-            }
-        }
-        
-        function deleteData(dataType, index) {
-            if (confirm(`Sunteți sigur că doriți să ștergeți acest element din ${dataType}?`)) {
-                data[dataType].splice(index, 1);
-                
-                // Salvarea pe GitHub
-                commitDataToGitHub(`[ADMIN] Șterge element din ${dataType}`).then(success => {
-                    if (success) {
-                        alert("Element șters și salvat pe GitHub. Site-ul se va actualiza în curând.");
-                        renderAdminContent();
-                    }
-                });
-            }
-        }
-        
-        function updateAdminCounts() {
-            document.getElementById('problemsCount').textContent = `(${data.problems.length})`;
-            document.getElementById('suggestionsCount').textContent = `(${data.suggestions.length})`;
-            document.getElementById('academicsCount').textContent = `(${data.academics.length})`;
-            document.getElementById('bullyingCount').textContent = `(${data.bullying.length})`;
-        }
-        
-        function renderAnnouncementsAdmin() {
-            const listElement = document.getElementById('currentAnnouncementsList');
-            listElement.innerHTML = '';
+        // 3. Sugestii
+        document.getElementById('sendSug').addEventListener('click', sendSugestie);
+        if(document.getElementById('clearSug')) document.getElementById('clearSug').addEventListener('click', () => formSugestii.reset());
 
-            if (data.announcements && data.announcements.length > 0) {
-                data.announcements.slice().reverse().forEach((item, index) => {
-                    const reversedIndex = data.announcements.length - 1 - index;
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'data-item';
-                    itemDiv.innerHTML = `
-                        <span class="date">${new Date(item.timestamp).toLocaleDateString('ro-RO')}</span>
-                        <strong>Anunț:</strong>
-                        ${item.content}
-                        <button class="btn btn-danger" style="margin-top: 10px;" onclick="deleteData('announcements', ${reversedIndex})">Șterge Anunț</button>
-                    `;
-                    listElement.appendChild(itemDiv);
-                });
-            } else {
-                listElement.innerHTML = `<p style="color: var(--secondary);">Niciun anunț publicat.</p>`;
-            }
-        }
-        
-        function addAnnouncement() {
-            const input = document.getElementById('announcementInput');
-            const content = input.value.trim();
+        function sendSugestie() {
+            const nume = document.getElementById('numeSug').value.trim();
+            const descr = document.getElementById('descrSug').value.trim();
             
-            if (content.length < 5) {
-                alert("Anunțul este prea scurt.");
-                return;
-            }
-            
-            data.announcements.push({
-                content: content,
-                timestamp: Date.now()
-            });
-            input.value = '';
+            if (descr.length < 5) { showToast('Descrierea este prea scurtă.', true); return; }
 
-            commitDataToGitHub(`[ADMIN] Adaugă anunț`).then(success => {
-                if (success) {
-                    alert("Anunț publicat și salvat pe GitHub. Site-ul se va actualiza în curând.");
-                    renderAdminContent();
-                }
-            });
+            const newId = nextId(state.sugestii);
+            const newSugestie = {
+                id: newId,
+                numeSug: nume || 'Anonim',
+                descr: descr,
+                date: new Date().toISOString(),
+                comments: []
+            };
+            state.sugestii.push(newSugestie);
+            persist();
+            formSugestii.reset();
+            showToast(`Sugestia #${newId} a fost trimisă.`);
+            renderSugestii();
         }
 
-        // *************** FUNCTII UI NORMAL ***************
-        
-        function renderUI() {
-            if (localStorage.getItem('isAdmin') === 'true') {
-                enterAdminMode();
-                return;
-            }
+        // 4. Academice
+        document.getElementById('sendAcad').addEventListener('click', sendAcad);
+        if(document.getElementById('clearAcad')) document.getElementById('clearAcad').addEventListener('click', () => formAcademice.reset());
+
+        function sendAcad() {
+            const tip = document.getElementById('tipAcad').value.trim();
+            const descr = document.getElementById('descrAcad').value.trim();
             
-            // Randare Anunturi (Mod normal)
-            const announcementList = document.getElementById('announcementList');
-            announcementList.innerHTML = '';
-            if (data.announcements.length > 0) {
-                data.announcements.slice().reverse().forEach(announcement => {
-                    const item = document.createElement('div');
-                    item.className = 'data-item';
-                    item.innerHTML = `
-                        <span class="date">${new Date(announcement.timestamp).toLocaleDateString('ro-RO')}</span>
-                        ${announcement.content}
-                    `;
-                    announcementList.appendChild(item);
-                });
-            } else {
-                announcementList.innerHTML = `<p style="color: var(--secondary);">Niciun anunț publicat.</p>`;
-            }
-            
-            // Randare Sondaj
-            renderPollSection();
+            if (descr.length < 5) { showToast('Descrierea este prea scurtă.', true); return; }
+            if (!tip) { showToast('Selectați tipul de sprijin academic.', true); return; }
+
+            const newId = nextId(state.acad);
+            const newAcad = {
+                id: newId,
+                tip: tip,
+                descr: descr,
+                date: new Date().toISOString(),
+                status: 'open',
+                comments: []
+            };
+            state.acad.push(newAcad);
+            persist();
+            formAcademice.reset();
+            showToast(`Solicitarea academică #${newId} a fost trimisă.`);
+            renderAcad();
         }
 
-        async function submitData(dataType, inputElement) {
-            const content = inputElement.value.trim();
-            const messageElement = document.getElementById(dataType + 'Message');
-            
-            if (content.length < 10) {
-                showMessage(messageElement, 'Vă rugăm să oferiți mai multe detalii (min. 10 caractere).', 'danger');
-                return;
-            }
-            
-            data[dataType].push({
-                content: content,
-                timestamp: Date.now()
-            });
-            inputElement.value = '';
-            
-            // Salvarea pe GitHub
-            const success = await commitDataToGitHub(`[ELEV] Trimite ${dataType}`);
-            
-            if (success) {
-                showMessage(messageElement, 'Mulțumim! Sesizarea a fost trimisă și va apărea în scurt timp pe site.', 'success');
-            } else {
-                 showMessage(messageElement, 'Eroare la trimitere. Vă rugăm să încercați din nou.', 'danger');
-            }
+        // 5. Anunțuri (Admin)
+        document.getElementById('sendAnunt').addEventListener('click', sendAnnouncement);
+
+        function sendAnnouncement() {
+            if (!isAdminMode) return;
+            const type = document.getElementById('tipAnunt').value;
+            const descr = document.getElementById('descrAnunt').value.trim();
+
+            if (descr.length < 10) { showToast('Textul anunțului este prea scurt.', true); return; }
+
+            const newId = nextId(state.announcements);
+            const newAnnouncement = {
+                id: newId,
+                type: type,
+                descr: descr,
+                date: new Date().toISOString()
+            };
+            // Adaugă la începutul listei (cel mai nou primul)
+            state.announcements.unshift(newAnnouncement); 
+            state.lastSeenAnnouncementId = newId - 1; // Forțează afișarea ca NOU pentru ceilalți
+            persist();
+            formAnnouncement.reset();
+            showToast(`Anunțul #${newId} a fost publicat.`);
+            renderAnnouncements();
         }
-        
-        function showMessage(element, text, type) {
-            element.textContent = text;
-            element.className = `message ${type}`;
-            element.style.display = 'block';
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000);
-        }
-        
-        // *************** FUNCTII VOT ***************
-        
-        function renderPollSection() {
-            const pollSection = document.getElementById('pollSection');
-            const pollResults = document.getElementById('pollResults');
+
+        // 6. Evenimente (Admin)
+        document.getElementById('sendEvent').addEventListener('click', sendEvent);
+
+        function sendEvent() {
+            if (!isAdminMode) return;
+            const title = document.getElementById('titluEvent').value.trim();
+            const date = document.getElementById('dataEvent').value.trim();
+
+            if (title.length < 5 || !date) { showToast('Titlul și data evenimentului sunt necesare.', true); return; }
             
-            if (localStorage.getItem('voted')) {
-                pollSection.style.display = 'none';
-                pollResults.style.display = 'block';
-                displayPollResults();
-            } else {
-                pollSection.style.display = 'block';
-                pollResults.style.display = 'none';
-            }
+            const newId = nextId(state.calendar);
+            const newEvent = {
+                id: newId,
+                title: title,
+                date: date
+            };
+            state.calendar.push(newEvent);
+            state.calendar.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sortează cronologic
+            persist();
+            document.getElementById('formEvent').reset();
+            showToast(`Evenimentul '${title}' a fost adăugat.`);
+            renderCalendar();
         }
-        
-        function submitPollVote() {
+
+        // --- Funcții Sondaj ---
+        function handleVote() {
+            if (state.poll.hasVoted && !isAdminMode) {
+                 showToast('Ai votat deja la acest sondaj.', true);
+                 return;
+            }
             const selectedOption = document.querySelector('input[name="pollOption"]:checked');
-            const messageElement = document.getElementById('pollMessage');
-
             if (!selectedOption) {
-                showMessage(messageElement, 'Vă rugăm să selectați o opțiune.', 'danger');
+                showToast('Selectați o opțiune înainte de a vota.', true);
                 return;
             }
-            
-            const voteKey = selectedOption.value;
-            data.poll.votes[voteKey] += 1;
-            
-            localStorage.setItem('voted', 'true');
-            
-            // Salvarea pe GitHub
-            commitDataToGitHub(`[ELEV] Votează sondaj`).then(success => {
-                if (success) {
-                    showMessage(messageElement, 'Vot înregistrat! Mulțumim.', 'success');
-                    renderPollSection();
-                } else {
-                    localStorage.removeItem('voted'); // Daca esueaza, permite re-votul
-                    showMessage(messageElement, 'Eroare la înregistrarea votului. Încercați din nou.', 'danger');
-                }
-            });
-        }
-        
-        function displayPollResults() {
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '';
-            
-            const totalVotes = Object.values(data.poll.votes).reduce((a, b) => a + b, 0);
-            
-            for (const key in data.poll.votes) {
-                const count = data.poll.votes[key];
-                const percentage = totalVotes === 0 ? 0 : Math.round((count / totalVotes) * 100);
-                
-                const bar = document.createElement('div');
-                bar.innerHTML = `
-                    <p style="margin: 5px 0 0;">${key.toUpperCase()} (${count} voturi):</p>
-                    <div class="bar" style="width: ${percentage}%; min-width: ${percentage > 0 ? '20px' : '0'};">${percentage}%</div>
-                `;
-                resultsContainer.appendChild(bar);
-            }
-        }
-        
-        function resetPoll() {
-            if (!confirm("Sunteți sigur că doriți să resetați toate voturile sondajului? Această acțiune este ireversibilă.")) return;
 
-            // Resetează voturile în structura de date
-            for (const key in data.poll.votes) {
-                data.poll.votes[key] = 0;
-            }
-            
-            // Salvarea pe GitHub
-            commitDataToGitHub(`[ADMIN] Resetează voturile sondajului`).then(success => {
-                if (success) {
-                    alert("Sondajul a fost resetat! Elevii pot vota din nou. Site-ul se va actualiza în curând.");
-                    localStorage.removeItem('voted'); // Scoaterea blocajului de vot pentru admin
-                    renderAdminContent();
-                }
-            });
+            const index = parseInt(selectedOption.value);
+            state.poll.votes[index]++;
+            state.poll.hasVoted = true;
+            persist();
+            showToast('Votul a fost înregistrat. Mulțumim!');
+            renderPoll();
         }
 
-        // *************** INITIALIZARE ***************
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('adminLoginBtn').addEventListener('click', () => {
-                document.getElementById('adminModal').style.display = 'block';
-            });
-            document.getElementById('adminLogoutBtn').addEventListener('click', exitAdminMode);
-            
-            fetchCurrentData(); // Începe preluarea datelor și randarea UI-ului
+        document.getElementById('resetVote').addEventListener('click', () => {
+             if (!isAdminMode) return;
+            state.poll.votes = new Array(state.poll.options.length).fill(0);
+            state.poll.hasVoted = false; // Poate fi resetat și votul elevului dacă e necesar
+            persist();
+            showToast('Voturile la sondaj au fost resetate.');
+            renderPoll();
         });
         
-        // *************** SECȚIUNEA DE DATE ***************
-        // Când se face un commit, codul de salvare inserează datele JSON aici.
+        document.getElementById('startNewPoll').addEventListener('click', () => {
+            if (!isAdminMode) return;
+            const title = document.getElementById('newPollTitle').value.trim();
+            const optionsText = document.getElementById('newPollOptions').value.trim();
+
+            if (!title || optionsText.split('\n').filter(o => o.trim()).length < 2) {
+                showToast('Introduceți un titlu și minim 2 opțiuni (pe rânduri noi).', true);
+                return;
+            }
+            
+            const options = optionsText.split('\n').map(o => o.trim()).filter(o => o);
+            
+            state.poll = {
+                title: title,
+                options: options,
+                votes: new Array(options.length).fill(0),
+                hasVoted: false // Resetăm votul pentru noul sondaj
+            };
+            persist();
+            document.getElementById('formNewPoll').reset();
+            showToast('Sondajul nou a fost lansat!');
+            renderPoll();
+        });
         
-        // *** DATA START ***
-{
-    "problems": [
-        {
-            "content": "Problema inițială de test.",
-            "timestamp": 1700000000000
+        // --- Funcții de Utilitate (Generale) ---
+
+        // Șterge toate datele (Acum necesită Mod Admin)
+        document.getElementById('clearAll').addEventListener('click', () => {
+            if (!isAdminMode) {
+                 showToast('Această acțiune necesită permisiuni de Admin.', true);
+                 return;
+            }
+
+            // ATENȚIE: Șterge și starea 'isAdminModeActive', dar parola e fixă, deci nu e problemă.
+            if (confirm("ATENȚIE! Această acțiune va șterge TOATE datele salvate în browser (sesizări, anunțuri, voturi, parolă admin). Ești sigur?")) {
+                localStorage.clear();
+                window.location.reload(); 
+            }
+        });
+        
+        // --- Evenimente UI (Burger Menu, Scroll) ---
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+            burger.classList.toggle('open');
+        });
+
+        window.addEventListener('scroll', () => {
+            if(toTopBtn) toTopBtn.classList.toggle('show', window.scrollY > 200);
+            
+            // Efect de reveal la carduri
+            document.querySelectorAll('.card:not(.revealed)').forEach(card => {
+                if (card.getBoundingClientRect().top < window.innerHeight - 100) {
+                    card.classList.add('revealed');
+                }
+            });
+        });
+
+        if(toTopBtn) {
+            toTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         }
-    ],
-    "suggestions": [
-        {
-            "content": "Sugestia inițială de test.",
-            "timestamp": 1700000000000
-        }
-    ],
-    "academics": [
-        {
-            "content": "Problema academică inițială de test.",
-            "timestamp": 1700000000000
-        }
-    ],
-    "bullying": [
-        {
-            "content": "Raport confidențial inițial de test.",
-            "timestamp": 1700000000000
-        }
-    ],
-    "announcements": [
-        {
-            "content": "Bine ați venit pe Platforma Vocea Elevilor! Testați toate funcțiile.",
-            "timestamp": 1700000000000
-        }
-    ],
-    "poll": {
-        "question": "Dacă ați putea schimba un lucru la școală săptămâna aceasta, care ar fi acela?",
-        "options": [
-            "orar",
-            "mancare",
-            "curatenie"
-        ],
-        "votes": {
-            "orar": 0,
-            "mancare": 0,
-            "curatenie": 0
-        }
-    }
-}
-        // *** DATA END ***
+        
+        // --- Inițializare la încărcarea paginii ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Rerandare inițială
+            renderProbleme();
+            renderBullying();
+            renderSugestii();
+            renderAcad();
+            renderAnnouncements();
+            renderCalendar();
+            renderPoll();     
+            
+            renderTopBar();
+            
+            // Declarație pentru a preveni trimiterea formularului la Enter
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', (e) => e.preventDefault());
+            });
+            
+            // Asigură că emailul e dezactivat by default
+            const contactBullyingCheckbox = document.getElementById('contactBullying');
+            const emailBullyingInput = document.getElementById('emailBullying');
+            if (contactBullyingCheckbox && emailBullyingInput) {
+                emailBullyingInput.disabled = !contactBullyingCheckbox.checked;
+            }
+            
+            // Activează efectul de reveal inițial pentru elementele vizibile
+            document.querySelectorAll('.card').forEach(card => {
+                if (card.getBoundingClientRect().top < window.innerHeight + 100) {
+                    card.classList.add('revealed');
+                }
+            });
+
+            // Re-activează Admin Mode (fără a cere parola) dacă era activ la reîncărcare
+            if (localStorage.getItem('isAdminModeActive') === 'true') {
+                isAdminMode = true;
+                updateAdminUI(); // Actualizează doar UI-ul, nu cere relogare forțată
+            } else {
+                 // În Mod Normal, ascunde complet conținutul Admin (fix pentru bug)
+                 if(adminContent) adminContent.style.display = 'none';
+            }
+        });
+        
+        // Salvare stare isAdminMode înainte de închidere/reîncărcare
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('isAdminModeActive', isAdminMode);
+        });
+        
+        // Faceți funcțiile necesare disponibile global (pentru a fi apelate din onclick în HTML)
+        window.addComment = addComment; 
+        window.changeStatus = changeStatus; 
+        window.deleteItem = deleteItem;     
+
     </script>
 </body>
 </html>
