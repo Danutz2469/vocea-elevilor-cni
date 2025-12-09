@@ -131,6 +131,12 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #444; }
         
+        input[type="file"] {
+            padding: 8px; /* Ajustare padding pentru input file */
+            border: 1px dashed #ddd; /* Stil vizual diferit */
+            background: #fcfcfc;
+        }
+
         input, select, textarea {
             width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
             font-size: 1rem; transition: border-color 0.3s; font-family: inherit;
@@ -169,6 +175,10 @@
         
         .item-meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 5px; display: flex; justify-content: space-between; }
         .item-content { font-size: 1rem; color: #333; white-space: pre-wrap; }
+
+        /* Stil pentru pozele adăugate */
+        .item-images { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; flex-wrap: wrap; gap: 10px; }
+        .item-images img { max-width: 100px; height: auto; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
         
         .admin-controls {
             margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;
@@ -227,6 +237,29 @@
             background: var(--card); border-radius: 50%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border: 2px solid #fff;
+            cursor: pointer; /* Adăugat cursor pointer */
+            transition: transform 0.1s;
+            overflow: hidden; /* Pentru a ascunde particulele inițial */
+        }
+        .star-badge-footer:active { transform: scale(0.95); }
+
+        /* CONTAINER PARTICULE ANIMATIE STELUTA */
+        #star-animation-container {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; /* Asigură că nu blochează click-urile */
+            z-index: 5000;
+        }
+
+        /* Stilul individual al particulei */
+        .star-particle {
+            position: absolute;
+            width: 8px; height: 8px;
+            background-color: #facc15; /* Culoare galbenă */
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.5s ease-out;
         }
 
         /* Toasts */
@@ -278,8 +311,7 @@
     </style>
 </head>
 <body>
-
-    <header>
+    <div id="star-animation-container"></div> <header>
         <div class="navbar">
             <div class="logo-area">
                 <img src="logo-scoala.png" alt="Logo">
@@ -392,6 +424,10 @@
                     <div class="form-group">
                         <label>Descriere</label>
                         <textarea id="probDesc" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Adaugă Poze (Opțional)</label>
+                        <input type="file" id="probPoze" multiple accept="image/*">
                     </div>
                     <button type="submit" class="submit-btn" style="background: var(--probleme-color);">Trimite Raportare</button>
                 </form>
@@ -518,14 +554,15 @@
     <div id="toast" class="toast"></div> 
 
     <footer>
-        <div class="star-badge-footer">★</div>
+        <div class="star-badge-footer" onclick="burstStarAnimation(event)">★</div>
         <p>Vocea Elevilor — Proiect Erasmus+ | CNI Piatra Neamț</p>
         <p style="margin-top:5px;">Dezvoltat de <strong>SEZONOV DANIEL-ADAM</strong></p>
     </footer>
 
     <script>
         // --- 1. STATE MANAGEMENT (LOCAL STORAGE) ---
-        const KEY = 'vocea_elevilor_local_v9';
+        // V10: Actualizez cheia de stocare pentru a gestiona noul câmp 'poze'
+        const KEY = 'vocea_elevilor_local_v10';
         
         const createInitialData = () => ({
             probleme: [],
@@ -543,12 +580,13 @@
 
         let data = JSON.parse(localStorage.getItem(KEY)) || createInitialData();
         
-        // Asigură că toate intrările au status, comments și urgent pentru a funcționa admin panel
+        // Asigură că toate intrările au status, comments, urgent și poze (pentru probleme)
         ['probleme', 'sugestii', 'bullying', 'acad'].forEach(type => {
             data[type].forEach(item => {
                 if(typeof item.status === 'undefined') item.status = 'nou';
                 if(typeof item.comments === 'undefined') item.comments = [];
                 if(typeof item.urgent === 'undefined') item.urgent = false;
+                if(type === 'probleme' && typeof item.poze === 'undefined') item.poze = []; // Noul câmp 'poze'
             });
         });
         
@@ -610,30 +648,102 @@
             const initialBtn = document.querySelector(`.nav-btn[onclick*="'${initialView}'"]`);
             switchView(initialView, initialBtn || document.querySelector('.nav-btn.active'));
         });
+        
+        // NOU: Logica pentru animația steluței
+        function burstStarAnimation(event) {
+            const star = event.currentTarget;
+            const rect = star.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const container = document.getElementById('star-animation-container');
+            
+            const particleCount = 10;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'star-particle';
+                
+                // Poziția inițială (centrul steluței)
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+                
+                // Proprietăți aleatorii
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 50 + 30; // Distanța de zbor
+                const duration = Math.random() * 0.5 + 0.5; // Durata animației
+
+                // Poziția finală
+                const finalX = centerX + distance * Math.cos(angle);
+                const finalY = centerY + distance * Math.sin(angle);
+
+                container.appendChild(particle);
+
+                // Forțează reflow pentru a aplica stilul inițial
+                void particle.offsetWidth; 
+
+                // Animația
+                particle.style.transition = `transform ${duration}s ease-out, opacity ${duration}s ease-out`;
+                particle.style.transform = `translate(${finalX - centerX}px, ${finalY - centerY}px) scale(0.2)`;
+                particle.style.opacity = 0;
+                
+                // Șterge particula după animație
+                setTimeout(() => {
+                    container.removeChild(particle);
+                }, duration * 1000);
+            }
+        }
+
 
         // --- 4. FORMULARE ELEVI ---
         
         function submitProblem(e) {
             e.preventDefault();
-            const newItem = {
-                id: Date.now(),
-                locatie: document.getElementById('probLocatie').value,
-                tip: document.getElementById('probTip').value,
-                desc: document.getElementById('probDesc').value,
-                data: new Date().toLocaleDateString(),
-                urgent: false, 
-                status: 'nou', 
-                comments: []    
-            };
-            data.probleme.unshift(newItem);
-            saveData();
             
-            const problemCard = e.target.closest('.card');
-            problemCard.classList.add('submission-success');
-            setTimeout(() => problemCard.classList.remove('submission-success'), 500);
+            const fileInput = document.getElementById('probPoze');
+            const files = fileInput.files;
+            const pozeArray = [];
+            
+            // Simulează încărcarea (în lipsa unui backend) prin convertirea fișierelor în URL-uri Data: Base64
+            // ATENȚIE: Aceasta stochează pozele local în browser. Nu este recomandat pentru producție!
+            const processFiles = Array.from(files).map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        // Limitează dimensiunea pozei stocate (pentru a nu bloca localStorage)
+                        // Aici ar trebui să se facă resize real, dar simplificăm prin stocarea Data URL
+                        pozeArray.push(e.target.result); 
+                        resolve();
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            });
 
-            e.target.reset();
-            showToast('✅ Problemă raportată!');
+            Promise.all(processFiles).then(() => {
+                const newItem = {
+                    id: Date.now(),
+                    locatie: document.getElementById('probLocatie').value,
+                    tip: document.getElementById('probTip').value,
+                    desc: document.getElementById('probDesc').value,
+                    data: new Date().toLocaleDateString(),
+                    urgent: false, 
+                    status: 'nou', 
+                    comments: [],
+                    poze: pozeArray // Adaugă Array-ul cu URL-urile imaginilor
+                };
+                
+                data.probleme.unshift(newItem);
+                saveData();
+                
+                const problemCard = e.target.closest('.card');
+                problemCard.classList.add('submission-success');
+                setTimeout(() => problemCard.classList.remove('submission-success'), 500);
+
+                e.target.reset();
+                showToast('✅ Problemă raportată! Pozele au fost atașate.');
+            }).catch(error => {
+                 showToast('❌ Eroare la citirea fișierelor.');
+                 console.error("File processing error:", error);
+            });
         }
 
         function submitSuggestion(e) {
@@ -961,6 +1071,13 @@
 
             renderPoll();
         }
+        
+        function renderImages(images) {
+             if (images.length === 0) return '';
+             const imageTags = images.map(src => `<img src="${src}" alt="Poză Problemă" onclick="window.open(this.src)">`).join('');
+             return `<div class="item-images">Imagini: ${imageTags}</div>`;
+        }
+
 
         function renderCommentsSection(item, type) {
             const commentList = item.comments.map(c => `
@@ -1023,7 +1140,7 @@
             `).join('') || '<p style="color:var(--muted)">Nu sunt anunțuri.</p>';
 
 
-            // Render Probleme
+            // Render Probleme (INCLUSIV POZE)
             document.getElementById('adminListProbleme').innerHTML = data.probleme.map(p => `
                 <div class="data-item ${p.urgent ? 'urgent-item' : ''}">
                     <div class="item-meta">
@@ -1031,7 +1148,7 @@
                         <span style="font-weight:bold; color:${p.status === 'rezolvat' ? '#10b981' : '#9ca3af'}">${p.tip} (${p.status.toUpperCase()})</span>
                     </div>
                     <div class="item-content">${p.desc}</div>
-                    <div class="admin-controls">
+                    ${renderImages(p.poze || [])} <div class="admin-controls">
                         <button class="btn-small ${p.status === 'nou' ? 'btn-resolve' : 'btn-status-nou'}" onclick="toggleStatus('probleme', ${p.id})">
                             ${p.status === 'nou' ? 'Marchează Rezolvat' : 'Marchează Nou'}
                         </button>
@@ -1106,7 +1223,9 @@
         window.addComment = addComment; 
         window.adminUpdatePoll = adminUpdatePoll;
         window.adminResetPollVotes = adminResetPollVotes;
-        window.adminDeleteAllData = adminDeleteAllData; // V4.9 FIX
+        window.adminDeleteAllData = adminDeleteAllData; 
+        window.submitProblem = submitProblem; // Asigură că funcția actualizată e disponibilă
+        window.burstStarAnimation = burstStarAnimation; // Animația steluței
     </script>
 </body>
 </html>
