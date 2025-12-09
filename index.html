@@ -320,10 +320,10 @@
             <div class="burger" onclick="toggleMenu()">☰</div>
             <div class="nav-menu" id="mainMenu">
                 <button class="nav-btn active" onclick="switchView('acasa', this)">Acasă</button>
+                <button class="nav-btn" onclick="switchView('sesizari', this)">Sesizări</button>
+                <button class="nav-btn" onclick="switchView('anunturi', this)">Anunțuri</button>
                 <button class="nav-btn" onclick="switchView('sondaj', this)">Sondaj</button>
                 <button class="nav-btn" onclick="switchView('resurse', this)">Resurse</button>
-                <button class="nav-btn" onclick="switchView('anunturi', this)">Anunțuri</button>
-                <button class="nav-btn" onclick="switchView('sesizari', this)">Sesizări</button>
                 <button class="nav-btn admin-btn" id="btnAdminAuth" onclick="toggleAdminAuth()">Admin</button>
             </div>
         </div>
@@ -569,8 +569,72 @@
             sugestii: [],
             bullying: [],
             acad: [],
-            anunturi: [],
-            calendar: [],
+            
+            // --- POPULARE CU DATELE CERUTE (Evenimente și Anunțuri) ---
+            anunturi: [
+                {
+                    id: 101,
+                    title: "Procedura de Înscriere la Examenele Naționale 2026",
+                    date: "12/09/2025",
+                    content: "Se aduce la cunoștința elevilor de clasele a VIII-a și a XII-a, precum și părinților acestora, că a fost publicată metodologia oficială privind înscrierea și desfășurarea Evaluării Naționale și a examenului de Bacalaureat pentru sesiunea 2026. Documentul complet, ce cuprinde calendarul exact, condițiile de eligibilitate și structura subiectelor, este disponibil pe site-ul Ministerului Educației și în secțiunea 'Resurse' a platformei școlii. Termenul limită pentru depunerea cererilor de înscriere este 30 ianuarie. Elevii sunt rugați să completeze formularele cu cea mai mare atenție sub îndrumarea diriginților. Orice nelămurire poate fi adresată secretariatului școlii în timpul programului de lucru. Vă rugăm să citiți cu atenție toate detaliile publicate."
+                },
+                {
+                    id: 102,
+                    title: "Regulamentul Intern al Școlii - Modificări și Actualizări",
+                    date: "12/05/2025",
+                    content: "Începând cu data de 1 decembrie, intră în vigoare noul Regulament de Organizare și Funcționare al Unității de Învățământ, care include modificări semnificative în ceea ce privește utilizarea telefoanelor mobile în timpul orelor și normele de conduită în spațiile comune. Noile reglementări vin în urma consultărilor cu elevii, părinții și corpul profesoral și au ca scop crearea unui mediu educațional mai disciplinat și mai propice învățării. Textul integral al regulamentului actualizat este afișat la avizierul școlii și poate fi descărcat de pe pagina principală. Toți membrii comunității școlare sunt obligați să ia la cunoștință și să respecte aceste prevederi, contribuind astfel la buna desfășurare a activităților."
+                },
+                {
+                    id: 103,
+                    title: "Programul de Consiliere Psihopedagogică Gratuită Extins",
+                    date: "11/28/2025",
+                    content: "Școala oferă sesiuni săptămânale extinse de consiliere psihopedagogică gratuită pentru elevii și părinții care se confruntă cu dificultăți de adaptare școlară, stres, anxietate sau probleme de comunicare. Programul este susținut de psihologul școlar și are loc în fiecare miercuri și vineri, între orele 14:00 și 17:00, în cabinetul de specialitate. Pentru a beneficia de o sesiune individuală, este necesară o programare prealabilă, care se poate face printr-un email trimis la adresa consiliere@scoala.ro sau prin intermediul dirigintelui. Confidențialitatea este garantată. Încurajăm toți elevii care simt nevoia de sprijin emoțional să apeleze cu încredere la acest serviciu esențial pentru starea lor de bine."
+                },
+                {
+                    id: 104,
+                    title: "Avertizare Meteo și Măsuri de Siguranță Iarna (Cod Galben)",
+                    date: "11/20/2025",
+                    content: "În contextul emiterii unui cod galben de vreme nefavorabilă (ninsori abundente/ger), rugăm toți elevii și părinții să ia măsuri sporite de precauție pe drumul către și de la școală. Recomandăm purtarea de îmbrăcăminte adecvată, antiderapante și evitarea zonelor periculoase (gheață, acoperișuri cu risc de cădere a țurțurilor). De asemenea, în cazul în care condițiile meteorologice impun suspendarea cursurilor, anunțul oficial va fi făcut public până cel târziu la ora 6:30 dimineața pe site-ul școlii și prin mesaj către diriginți. Vă rugăm să urmăriți canalele oficiale de comunicare și să nu vă bazați pe surse neconfirmate. Siguranța elevilor este prioritatea noastră absolută în aceste condiții meteo dificile."
+                },
+                {
+                    id: 105,
+                    title: "Recrutare Voluntari pentru Proiectul 'Biblioteca Viitorului'",
+                    date: "11/15/2025",
+                    content: "Lansăm un apel către elevii entuziaști din clasele IX-XI care doresc să se implice în modernizarea și digitalizarea fondului de carte al bibliotecii școlare. Proiectul implică activități de inventariere, etichetare și introducere a datelor în noul sistem informatic, oferind voluntarilor o experiență valoroasă de lucru în echipă și organizare. Participarea este recunoscută cu diplome de voluntariat, esențiale pentru portofoliul personal și dezvoltarea personală. Cei interesați sunt invitați la o sesiune de informare joi, la ora 13:00, în sala de lectură a bibliotecii. Vă rugăm să vă înscrieți până miercuri la secretariat. Contribuția voastră este crucială pentru succesul acestui proiect de modernizare."
+                }
+            ],
+            calendar: [
+                {
+                    id: 201,
+                    title: "Ziua Porților Deschise - 15 Noiembrie 2025",
+                    date: "2025-11-15",
+                    content: "Evenimentul este dedicat elevilor de clasa a VIII-a și părinților acestora, oferindu-le ocazia unică de a explora facilitățile școlii și de a interacționa direct cu profesorii și conducerea. Vom prezenta oferta educațională detaliată, inclusiv profilurile specializate și activitățile extrașcolare disponibile. Este o șansă excelentă de a înțelege viziunea noastră pedagogică și de a pune întrebări despre procesul de admitere. Tururile ghidate vor începe la ora 10:00 și vor include laboratoarele de informatică, biblioteca modernă și terenurile de sport. Participarea se face pe bază de înscriere prealabilă pe site-ul școlii pentru o mai bună organizare și estimare a numărului de vizitatori. Vă așteptăm cu drag în număr cât mai mare!"
+                },
+                {
+                    id: 202,
+                    title: "Săptămâna Verde: Reciclare și Educație Ecologică",
+                    date: "2025-12-02",
+                    content: "În cadrul inițiativei naționale „Săptămâna Verde”, școala noastră organizează o serie de activități menite să crească gradul de conștientizare privind protecția mediului. Elevii vor participa la ateliere practice de reciclare creativă, la plantarea de puieți în curtea școlii și la sesiuni interactive despre reducerea amprentei de carbon. Fiecare clasă va concura într-o competiție de colectare separată a deșeurilor, cu premii ecologice pentru câștigători. Scopul principal este de a insufla elevilor un simț al responsabilității față de natură și de a promova practici sustenabile în viața de zi cu zi, învățând totodată prin joacă și experimente practice. Vă rugăm să încurajați elevii să aducă materiale reciclabile de acasă pentru ateliere."
+                },
+                {
+                    id: 203,
+                    title: "Concursul de Matematică 'Pitagora Junior'",
+                    date: "2026-01-20",
+                    content: "Cea de-a X-a ediție a prestigiosului concurs de matematică se va desfășura online și fizic, adresându-se elevilor talentați din clasele V-VIII. Obiectivul este de a stimula gândirea logică și rezolvarea de probleme complexe, depășind programa școlară standard. Înscrierile se fac până la data de 10 ianuarie prin intermediul profesorilor coordonatori de clasă. Subiectele vor fi elaborate de o comisie de experți și vor testa creativitatea și profunzimea înțelegerii conceptelor matematice. Cei mai buni elevi vor fi premiați în cadrul unei ceremonii speciale și vor avea șansa de a participa la etapele superioare ale competițiilor naționale. Recomandăm pregătirea intensivă și consultarea materialelor de antrenament disponibile pe platforma dedicată. Mult succes tuturor participanților!"
+                },
+                {
+                    id: 204,
+                    title: "Ședință cu Părinții: Evaluarea Semestrială",
+                    date: "2026-02-15",
+                    content: "Conducerea școlii și cadrele didactice invită toți părinții la o ședință generală urmată de întâlniri individuale cu diriginții. Subiectul principal îl constituie analiza performanței elevilor după primul semestru, discuția despre progresul școlar și identificarea strategiilor de îmbunătățire a rezultatelor. Vor fi prezentate noile metode de evaluare și instrumentele digitale folosite în procesul didactic. Părinții sunt încurajați să participe activ, să adreseze întrebări și să colaboreze cu profesorii pentru a asigura un mediu de învățare optim. Vă rugăm să confirmați prezența la dirigintele clasei până la data de 10 februarie pentru o mai bună estimare a numărului de participanți și alocarea spațiilor necesare, în vederea unei sesiuni cât mai productive."
+                },
+                {
+                    id: 205,
+                    title: "Festivalul de Artă și Cultură Școlară",
+                    date: "2026-03-10",
+                    content: "Acest eveniment anual celebrează talentul artistic al elevilor noștri prin expoziții de pictură, sculptură, spectacole de teatru și recitaluri de muzică. Festivalul oferă o platformă esențială pentru exprimarea creativității și încurajează dezvoltarea laturii culturale a tinerilor. Elevii de la toate ciclurile de învățământ sunt invitați să se înscrie cu creațiile lor până la 1 martie. Juriul va acorda premii pentru cele mai originale și bine executate lucrări din fiecare categorie. Publicul este invitat să admire operele și să susțină micii artiști, transformând evenimentul într-o adevărată sărbătoare a comunității școlare. Detaliile despre înscriere și programul exact al spectacolelor vor fi publicate săptămâna viitoare pe site-ul oficial al școlii."
+                }
+            ],
             sondaj: {
                 intrebare: "Ce activitate doriți săptămâna viitoare?",
                 optiuni: ["Seară de Film", "Turneu de Șah", "Club de Lectură"],
@@ -587,6 +651,13 @@
                 if(typeof item.comments === 'undefined') item.comments = [];
                 if(typeof item.urgent === 'undefined') item.urgent = false;
                 if(type === 'probleme' && typeof item.poze === 'undefined') item.poze = []; // Noul câmp 'poze'
+            });
+        });
+        
+        // --- Asigură reinițializarea câmpurilor (în cazul în care structura veche nu le avea) ---
+        ['anunturi', 'calendar'].forEach(type => {
+            data[type].forEach(item => {
+                if(typeof item.date === 'undefined') item.date = new Date().toLocaleDateString();
             });
         });
         
@@ -915,7 +986,7 @@
                 let pass = prompt("Introdu parola de administrator:");
                 if(pass === ADMIN_PASS) {
                     isAdmin = true;
-                    document.getElementById('btnAdminAuth').innerText = "Ieși Admin";
+                    document.getElementById('btnAdminAuth').innerText = "Deconectare"; // Schimbă în "Deconectare"
                     document.getElementById('btnAdminAuth').style.background = "#c81919";
                     document.getElementById('admin-dashboard').classList.add('visible');
                     renderAdminPanel();
@@ -1226,6 +1297,13 @@
         window.adminDeleteAllData = adminDeleteAllData; 
         window.submitProblem = submitProblem; // Asigură că funcția actualizată e disponibilă
         window.burstStarAnimation = burstStarAnimation; // Animația steluței
+        
+        // Re-mapează data la încărcare pentru a afișa evenimentele/anunțurile default
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... (restul logicii) ...
+            renderPublicContent();
+        });
+        
     </script>
 </body>
 </html>
