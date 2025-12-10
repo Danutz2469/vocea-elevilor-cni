@@ -983,7 +983,7 @@
             if(isAdmin) {
                 logoutAdmin();
             } else {
-                let pass = prompt("Introdu parola de administrator:");
+                let pass = prompt("Introdu parola de administrator:(1234)");
                 if(pass === ADMIN_PASS) {
                     isAdmin = true;
                     document.getElementById('btnAdminAuth').innerText = "Deconectare"; // Schimbă în "Deconectare"
@@ -1307,3 +1307,4 @@
     </script>
 </body>
 </html>
+
